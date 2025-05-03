@@ -30,6 +30,10 @@ const tabsVariants = cva([
     orientation: {
       horizontal: "flex-row",
       vertical: "flex-col",
+    },
+    disabled: {
+      true: "opacity-50 cursor-not-allowed",
+      false: "",
     }
   },
   defaultVariants: {
@@ -69,7 +73,9 @@ export const Tabs: React.FC<TabsProps> = ({
   size,
   radius,
   color, 
+  disabled,
   orientation,
+
 }) => {
   const id = useId();
   const isControlled = controlled !== undefined;
@@ -89,9 +95,10 @@ export const Tabs: React.FC<TabsProps> = ({
   const contextValue: TabsContextProps = {
     value: current,
     setValue,
-    size: size,
-    color: color, 
-    radius: radius, 
+    size,
+    color, 
+    radius, 
+    disabled
   };
 
   return (

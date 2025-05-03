@@ -29,9 +29,7 @@ type Story = StoryObj<typeof meta>;
 // ============================================================================
 
 export const Default: Story = {
-  args: {
-    // Default value is handled by the decorator's state
-  },
+
   render: (args) => (
     <Tabs {...args}>
       <Tab value="tab1" title="Tab 1" />
@@ -41,15 +39,27 @@ export const Default: Story = {
   ),
 };
 
-export const WithDisabledTab: Story = {
-    args: {
-      // Default value is handled by the decorator's state
-    },
+
+export const DisabledTabs: Story = {
+
+  render: (args) => ( 
+    <Tabs {...args} disabled>
+      <Tab value="tab1" title="Tab 1" />
+      <Tab value="tab2" title="Tab 2" />
+      <Tab value="tab3" title="Tab 3" />
+    </Tabs>
+  ),
+};
+
+export const DisabledTab: Story = {
+
     render: (args) => (
       <Tabs {...args}>
         <Tab value="tab1" title="Tab 1" />
-        <Tab value="tab2" title="Tab 2 (Disabled)" disabled />
+        <Tab value="tab2" title="Tab 2" disabled />
         <Tab value="tab3" title="Tab 3" />
       </Tabs>
     ),
   };
+
+

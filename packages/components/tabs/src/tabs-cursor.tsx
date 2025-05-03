@@ -39,7 +39,6 @@ export const TabsCursor: React.FC<TabsCursorProps> = () => {
       layoutId="tabs-cursor"
       style={{ opacity: 0.5 }}
       transition={{  type:'spring', duration: 0.4 }}
-      // Apply base and variant classes based on color and radius
       className={cn(cursorVariants({ radius }))}
     />
   );

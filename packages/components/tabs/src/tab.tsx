@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from "react";
-import { cva } from "class-variance-authority";
+import { cva, VariantProps } from "class-variance-authority";
 import { useTabs } from "./use-tabs";
 import { TabsCursor } from "./tabs-cursor";
 import { cn } from "../../../utils/src";
@@ -8,12 +8,10 @@ const tabVariants = cva(
   [
     'relative',
     "w-full px-3 py-1 flex  justify-center items-center cursor-pointer",
-    "hover:text-gray-400 transition-colors duration-300",
     'z-10'
   ],
   {
     variants: {
-      // Size variants from HeroUI example
       size: {
         sm: "h-7 text-tiny",
         md: "h-8 text-small",
@@ -22,9 +20,9 @@ const tabVariants = cva(
       radius: {
         none: "rounded-none",
         sm: "rounded-sm",
-        md: "rounded-md", // Matches default list radius
-        lg: "rounded-lg", // Matches default list radius
-        full: "rounded-full", // Matches color example radius
+        md: "rounded-md",
+        lg: "rounded-lg", 
+        full: "rounded-full",
       },
       color: {
         primary: "",
@@ -33,37 +31,46 @@ const tabVariants = cva(
         success: "",
         warning: "",
       },
+      disabled: {
+        true: "opacity-50 cursor-not-allowed",
+        false: "hover:text-gray-400 transition-colors duration-300",
+      }
     },
     defaultVariants: {
       size: "md",
-      radius: "md", // Default radius matches list
+      radius: "md",
+      disabled: false,
     },
   }
 );
 
+type TabVariants = VariantProps<typeof tabVariants>;
 
 export interface TabProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'title'>{
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof TabVariants | 'value' | 'title'>  {
   value: string | null;
   title: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const Tab: React.FC<TabProps> = ({
   value,
   title,
   className,
-  disabled = false,
   onClick,
-  ...props // Pass rest of the props
+  disabled,
+  ...props
 }) => {
-  // Get context including size, color, and radius
   const { 
     value: current, 
     setValue, 
     size, 
     color, 
-    radius } = useTabs();
+    radius,
+    disabled: tabsDisabled,
+  } = useTabs();
   const isActive = current === value;
+  const isDisabled = disabled || tabsDisabled;
 
 
   const handleClick:MouseEventHandler<HTMLButtonElement> = (evt) => {
@@ -77,13 +84,13 @@ export const Tab: React.FC<TabProps> = ({
 
   return (
     <button
-      className={cn(tabVariants({ size, radius, color }), className)}
-      disabled={disabled}
+      className={cn(tabVariants({ size, radius, color,disabled:isDisabled }), className)}
+      disabled={isDisabled ?? false}
       onClick={handleClick}
-      {...props} // Spread remaining props
+      {...props}
     >
       {title}
-      {isActive && <TabsCursor />}
+      {isActive && !isDisabled && <TabsCursor />}
     </button>
   );
 };
