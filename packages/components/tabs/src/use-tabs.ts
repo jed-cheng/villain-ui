@@ -1,16 +1,15 @@
 import { 
   createContext, 
   useContext, 
-  Dispatch, 
-  SetStateAction
 } from 'react';
+import { TabsVariants } from './tabs';
 
-interface TabsContextProps {
-  activeTab: string | number;
-  setActiveTab: Dispatch<SetStateAction<string | number>>;
-}
+export interface TabsContextProps extends TabsVariants{
+  value: string | null;
+  setValue: (next: string | null) => void;
+} 
 
-const TabsContext = createContext<TabsContextProps | undefined>(undefined);
+const TabsContext = createContext<TabsContextProps | null>(null);
 
 export const useTabs = () => {
   const context = useContext(TabsContext);
@@ -21,3 +20,5 @@ export const useTabs = () => {
 };
 
 export const TabsProvider = TabsContext.Provider;
+
+
