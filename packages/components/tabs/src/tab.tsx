@@ -25,6 +25,7 @@ const tabVariants = cva(
         full: "rounded-full",
       },
       color: {
+        default: "",
         primary: "",
         secondary: "",
         danger: "",

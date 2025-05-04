@@ -6,7 +6,6 @@ import { useTabs } from "./use-tabs";
 const cursorVariants = cva(
   [
     "absolute z-0 inset-0",
-    ' shadow-sm',
     'bg-gray-300'
   ],
   {
@@ -18,8 +17,14 @@ const cursorVariants = cva(
         lg: "rounded-lg",
         full: "rounded-full",
       },
-
+      variant: {
+        solid: null,
+        underline: "bg-transparent border-b-2 border-white rounded-none",
+        light: null,
+        bordered: null,
+      }
     },
+
     defaultVariants: {
       radius: "md",
     },
@@ -32,6 +37,7 @@ interface TabsCursorProps extends CursorVariants {}
 export const TabsCursor: React.FC<TabsCursorProps> = () => {
   const {
     radius,
+    variant
   } = useTabs();
 
   return (
@@ -39,7 +45,7 @@ export const TabsCursor: React.FC<TabsCursorProps> = () => {
       layoutId="tabs-cursor"
       style={{ opacity: 0.5 }}
       transition={{  type:'spring', duration: 0.4 }}
-      className={cn(cursorVariants({ radius }))}
+      className={cn(cursorVariants({ radius, variant }))}
     />
   );
 };

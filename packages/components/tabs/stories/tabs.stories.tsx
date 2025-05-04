@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
 import { Tabs, Tab } from "../src"; // Assuming TabsCursor is internal and shown via Tabs
 
 const meta: Meta<typeof Tabs> = {
@@ -40,7 +39,51 @@ export const Default: Story = {
 };
 
 
-export const DisabledTabs: Story = {
+export const Vertical: Story = {
+  render: (args) => (
+    <Tabs {...args} orientation="vertical">
+      <Tab value="tab1" title="Tab 1" />
+      <Tab value="tab2" title="Tab 2" />
+      <Tab value="tab3" title="Tab 3" />
+    </Tabs>
+  ),
+};
+
+
+export const Underline: Story = {
+  render: (args) => (
+    <Tabs {...args} variant="underline">
+      <Tab value="tab1" title="Tab 1" />
+      <Tab value="tab2" title="Tab 2" />
+      <Tab value="tab3" title="Tab 3" />
+    </Tabs>
+  ),
+}
+
+export const Light: Story = {
+  render: (args) => (
+    <Tabs {...args} variant="light">
+      <Tab value="tab1" title="Tab 1" />
+      <Tab value="tab2" title="Tab 2" />
+      <Tab value="tab3" title="Tab 3" />
+    </Tabs>
+  ),
+};
+
+export const Bordered: Story = {
+  render: (args) => (
+    <Tabs {...args} variant="bordered">
+      <Tab value="tab1" title="Tab 1" />
+      <Tab value="tab2" title="Tab 2" />
+      <Tab value="tab3" title="Tab 3" />
+    </Tabs>
+  ),
+};
+
+
+
+
+export const Disabled: Story = {
 
   render: (args) => ( 
     <Tabs {...args} disabled>

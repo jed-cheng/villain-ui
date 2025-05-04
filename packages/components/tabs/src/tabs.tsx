@@ -21,6 +21,7 @@ const tabsVariants = cva([
       full: " rounded-full",
     },
     color: {
+      default: "bg-gray-700 text-white",
       primary: "bg-blue-500 text-white border-transparent",
       secondary: "bg-white text-gray-800 border-gray-400",
       danger: "bg-red-500 text-white border-transparent",
@@ -31,9 +32,15 @@ const tabsVariants = cva([
       horizontal: "flex-row",
       vertical: "flex-col",
     },
+    variant: {
+      solid: null,
+      underline: "bg-transparent",
+      light: "bg-transparent",
+      bordered: "border-b bg-transparent",
+    },
     disabled: {
       true: "opacity-50 cursor-not-allowed",
-      false: "",
+      false: null,
     }
   },
   defaultVariants: {
@@ -55,14 +62,19 @@ export interface TabsProps
 }
 
 
-const getFirstChildValue = (children: React.ReactNode) => {
-  const first = React.Children.toArray(children)
-    .find((child) => 
-      React.isValidElement<{ value?: string }>(child) && child.props.value != null) as
-    | React.ReactElement<{ value: string }>
-    | undefined;
-  return first?.props.value ?? null;
-};
+
+
+export function getFirstChildValue(children: React.ReactNode): string | null {
+  for (const child of React.Children.toArray(children)) {
+    if (
+      React.isValidElement<{ value?: string }>(child) &&
+      child.props.value != null
+    ) {
+      return child.props.value;
+    }
+  }
+  return null;
+}
 
 export const Tabs: React.FC<TabsProps> = ({
   defaultValue,
@@ -75,7 +87,7 @@ export const Tabs: React.FC<TabsProps> = ({
   color, 
   disabled,
   orientation,
-
+  variant,
 }) => {
   const id = useId();
   const isControlled = controlled !== undefined;
@@ -98,7 +110,8 @@ export const Tabs: React.FC<TabsProps> = ({
     size,
     color, 
     radius, 
-    disabled
+    disabled,
+    variant
   };
 
   return (
