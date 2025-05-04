@@ -1,4 +1,4 @@
-export { Tabs, type TabsProps } from './tabs'; // Export TabsProps if needed
+export { Tabs, type TabsProps } from './tabs';
 export { Tab, type TabProps } from './tab';
-export { TabPanel } from './tab-content'; // Keep TabPanel export if it might be used standalone or for typing
+export { TabPanel } from './tab-panel'; 
 export { useTabs } from './use-tabs';

@@ -83,12 +83,12 @@ export const Tab: React.FC<TabProps> = ({
   return (
     <button
       className={tabVariants({ size, radius, color,disabled:isDisabled, className })}
-      disabled={isDisabled ?? false}
+      disabled={isDisabled}
       onClick={handleClick}
       {...props}
     >
       {title}
-      {isActive && !isDisabled && <TabsCursor />}
+      {isActive && <TabsCursor />}
     </button>
   );
 };

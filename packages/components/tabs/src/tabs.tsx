@@ -89,7 +89,7 @@ export const Tabs: React.FC<TabsProps> = ({
   orientation,
   variant,
 }) => {
-  const id = useId();
+  const layoutId = useId();
   const isControlled = controlled !== undefined;
   const [uncontrolled, setUncontrolled] = useState(defaultValue ?? getFirstChildValue(children));
 
@@ -119,7 +119,7 @@ export const Tabs: React.FC<TabsProps> = ({
       <ul
         className={tabsVariants({ size, radius, color, orientation, className })}
       >
-        <LayoutGroup id={id}>
+        <LayoutGroup id={layoutId}>
           {children}
         </LayoutGroup>
       </ul>
