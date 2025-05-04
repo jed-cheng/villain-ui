@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { AnimatePresence } from "motion/react";
-import { Ripple, RippleEffect } from "./ripple-effect";
+import {  RippleEffect } from "./ripple-effect";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/src/index";
+import { useRipples } from "./use-ripples";
 
 const buttonVariants = cva([
   'relative overflow-hidden',
@@ -49,26 +50,7 @@ export interface ButtonProps
     ButtonVariants {}
 
 
-function useRipple(disabled: boolean, onClick?: React.MouseEventHandler<HTMLButtonElement>) {
-  const [ripples, setRipples] = useState<Ripple[]>([]);
 
-  const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (disabled) return;
-    const button = event.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const size = Math.sqrt(rect.width ** 2 + rect.height ** 2) * 2;
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-    setRipples(prev => [...prev, { id: Date.now(), x, y, size }]);
-    onClick?.(event);
-  };
-
-  const handleAnimationComplete = (rippleId: number) => {
-    setRipples(prev => prev.filter(r => r.id !== rippleId));
-  };
-
-  return { ripples, createRipple, handleAnimationComplete };
-}
 
 export const Button: React.FC<ButtonProps> = ({
   className,
@@ -84,7 +66,7 @@ export const Button: React.FC<ButtonProps> = ({
     ripples, 
     createRipple, 
     handleAnimationComplete 
-  } = useRipple(disabled ?? false, onClick);
+  } = useRipples(disabled ?? false, onClick);
 
   return (
     <button
