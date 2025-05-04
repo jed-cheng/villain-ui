@@ -1,49 +1,46 @@
 import React, { MouseEventHandler } from "react";
-import { cva, VariantProps } from "class-variance-authority";
 import { useTabs } from "./use-tabs";
 import { TabsCursor } from "./tabs-cursor";
-import { cn } from "../../../utils/src";
+import { tv, type VariantProps } from 'tailwind-variants';
 
-const tabVariants = cva(
-  [
+const tabVariants = tv({
+  base: [
     'relative',
     "w-full px-3 py-1 flex  justify-center items-center cursor-pointer",
     'z-10'
   ],
-  {
-    variants: {
-      size: {
-        sm: "h-7 text-tiny",
-        md: "h-8 text-small",
-        lg: "h-9 text-medium",
-      },
-      radius: {
-        none: "rounded-none",
-        sm: "rounded-sm",
-        md: "rounded-md",
-        lg: "rounded-lg", 
-        full: "rounded-full",
-      },
-      color: {
-        default: "",
-        primary: "",
-        secondary: "",
-        danger: "",
-        success: "",
-        warning: "",
-      },
-      disabled: {
-        true: "opacity-50 cursor-not-allowed",
-        false: "hover:text-gray-400 transition-colors duration-300",
-      }
+  variants: {
+    size: {
+      sm: "h-7 text-tiny",
+      md: "h-8 text-small",
+      lg: "h-9 text-medium",
     },
-    defaultVariants: {
-      size: "md",
-      radius: "md",
-      disabled: false,
+    radius: {
+      none: "rounded-none",
+      sm: "rounded-sm",
+      md: "rounded-md",
+      lg: "rounded-lg", 
+      full: "rounded-full",
     },
-  }
-);
+    color: {
+      default: "",
+      primary: "",
+      secondary: "",
+      danger: "",
+      success: "",
+      warning: "",
+    },
+    disabled: {
+      true: "opacity-50 cursor-not-allowed",
+      false: "hover:text-gray-400 transition-colors duration-300",
+    }
+  },
+  defaultVariants: {
+    size: "md",
+    radius: "md",
+    disabled: false,
+  },
+});
 
 type TabVariants = VariantProps<typeof tabVariants>;
 
@@ -85,7 +82,7 @@ export const Tab: React.FC<TabProps> = ({
 
   return (
     <button
-      className={cn(tabVariants({ size, radius, color,disabled:isDisabled }), className)}
+      className={tabVariants({ size, radius, color,disabled:isDisabled, className })}
       disabled={isDisabled ?? false}
       onClick={handleClick}
       {...props}

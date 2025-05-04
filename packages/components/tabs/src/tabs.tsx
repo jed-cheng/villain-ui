@@ -1,12 +1,12 @@
 import React, { useCallback, useId, useState } from 'react';
-import { cn } from '../../../utils/src/index';
 import { TabsProvider, TabsContextProps } from './use-tabs';
-import { cva, VariantProps } from 'class-variance-authority';
 import {  LayoutGroup } from 'motion/react';
+import { tv, type VariantProps } from 'tailwind-variants';
 
-const tabsVariants = cva([
-  'flex p-1 h-fit gap-2 items-center flex-nowrap ',
-], {
+const tabsVariants = tv({
+  base: [
+    'flex p-1 h-fit gap-2 items-center flex-nowrap ',
+  ],
   variants: {
     size: {
       sm: "gap-1",
@@ -117,7 +117,7 @@ export const Tabs: React.FC<TabsProps> = ({
   return (
     <TabsProvider value={contextValue}>
       <ul
-        className={cn(tabsVariants({ size, radius, color, orientation }), className)}
+        className={tabsVariants({ size, radius, color, orientation, className })}
       >
         <LayoutGroup id={id}>
           {children}
