@@ -14,13 +14,25 @@ const meta = {
   tags: ['autodocs'],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
-    // Define argTypes for props if needed, e.g.:
-    // backgroundColor: { control: 'color' },
+    // Define argTypes if needed, e.g., for controlling props via Storybook UI
+    color: {
+      control: { type: 'select' },
+      options: ['default', 'primary', 'secondary', 'success', 'warning', 'danger'],
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['solid', 'outline', 'ghost', 'underline'],
+    },
+    disabled: {
+      control: { type: 'boolean' },
+    }
+
   },
-  args: {
-    // Default args for all stories
-    children: 'Button',
-  }
+
 } satisfies Meta<typeof Button>;
 
 export default meta;
@@ -29,60 +41,48 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
 /* color variants */
-export const Primary: Story = {
-  args: {
-    color: 'primary',
-  },
+
+export const Default: Story = {
+  render: (args) => <Button {...args}>Button</Button>,
 };
 
-
+export const Primary: Story = {
+  render: (args) => <Button {...args} color='primary'>Button</Button>,
+};
 
 
 /* size variants */
 export const Small: Story = {
-  args: {
-    size: 'sm',
-  },
+  render: (args) => <Button {...args} size='sm'>Button</Button>,
 };
 
 export const Medium: Story = {
-  args: {
-    size: 'md',
-  },
+  render: (args) => <Button {...args} size='md'>Button</Button>,
 };
 
 export const Large: Story = {
-  args: {
-    size: 'lg',
-  },
+  render: (args) => <Button {...args} size='lg'>Button</Button>,
 };
 
 /* variant variants */
-export const Solid: Story = {
-  args: {
-    variant: 'solid',
-  },
-};
 
 export const Outline: Story = {
-  args: {
-    variant: 'outline',
-  },
+  render: (args) => <Button {...args} variant='outline'>Button</Button>,
 };
 
 export const Ghost: Story = {
-  args: {
-    variant: 'ghost',
-  },
+  render: (args) => <Button {...args} variant='ghost'>Button</Button>,
+};
+
+export const Underline: Story = {
+  render: (args) => <Button {...args} variant='underline'>Button</Button>,
 };
 
 
 
 /* disabled */
 export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
+  render: (args) => <Button {...args} disabled>Button</Button>,
 }
 
 
