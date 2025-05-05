@@ -1,42 +1,55 @@
 import React from "react";
 import { AnimatePresence } from "motion/react";
-import {  RippleEffect } from "./ripple-effect";
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../../utils/src/index";
+import { RippleEffect } from "./ripple-effect";
 import { useRipples } from "./use-ripples";
+import { tv, type VariantProps } from "tailwind-variants";
 
-const buttonVariants = cva([
-  'relative overflow-hidden',
-  'transform  transition duration-150',
-  'inline-flex items-center justify-center',
-],{
+const buttonVariants = tv({
+  base: [
+    'relative overflow-hidden',
+    'transform  transition duration-150',
+    'inline-flex items-center justify-center',
+    'cursor-pointer'
+  ],
   variants: {
     color: {
-      primary: "bg-blue-500 text-white border-transparent",
-      secondary: "bg-white text-gray-800 border-gray-400",
-      danger: "bg-red-500 text-white border-transparent",
-      success: "bg-green-500 text-white border-transparent",
-      warning: "bg-yellow-500 text-white border-transparent",
+      default: "bg-gray-600 text-white border-gray-600",
+      primary: "bg-blue-500 text-white border-blue-500 ",
+      secondary: "bg-white text-gray-800 ",
+      danger: "bg-red-500 text-white border-red-500 ",
+      success: "bg-green-500 text-white border-green-500 ",
+      warning: "bg-yellow-500 text-white border-yellow-500 ",
     },
     size: {
-      sm: "px-2 min-w-16 h-8 text-sm gap-1 rounded-sm [&>svg]:max-w-[theme(spacing.7)]", // Includes rounded-small
-      md: "px-4 min-w-20 h-10 text-md gap-2 rounded-md [&>svg]:max-w-[theme(spacing.8)]", // Includes rounded-medium
-      lg: "px-6 min-w-24 h-12 text-lg gap-3 rounded-lg [&>svg]:max-w-[theme(spacing.8)]", // Includes rounded-large
-
+      sm: "px-2 min-w-16 h-8 text-sm gap-1 rounded-sm [&>svg]:max-w-[theme(spacing.7)]",
+      md: "px-4 min-w-20 h-10 text-md gap-2 rounded-md [&>svg]:max-w-[theme(spacing.8)]",
+      lg: "px-6 min-w-24 h-12 text-lg gap-3 rounded-lg [&>svg]:max-w-[theme(spacing.8)]", 
     },
     disabled: {
       true: "opacity-50 cursor-not-allowed",
       false: "active:scale-95",
     },
     variant: {
-      solid: "bg-blue-500 text-white border-transparent",
-      outline: "bg-white text-blue-500 border border-blue-500 hover:bg-blue-100",
-      ghost: "bg-transparent text-blue-500 border-transparent hover:bg-blue-100",
-      link: "bg-transparent text-blue-500 border-transparent",
-    }
+      solid: null,
+      outline: " text-black border ",
+      ghost: "   text-black",
+      underline: "bg-transparent hover:underline text-black",
+    },
   },
+  compoundVariants: [
+    {
+      color: 'default',
+      variant: 'outline',
+      class: 'bg-transparent  hover:bg-gray-600/50',
+    },
+    {
+      color: 'default',
+      variant: 'ghost',
+      class: 'bg-transparent hover:bg-gray-600/50',
+    }
+  ],
   defaultVariants: {
-    color: 'primary',
+    color: 'default',
     size: 'md',
     variant: 'solid',
     disabled: false,
@@ -66,13 +79,13 @@ export const Button: React.FC<ButtonProps> = ({
     ripples, 
     createRipple, 
     handleAnimationComplete 
-  } = useRipples(disabled ?? false, onClick);
+  } = useRipples(disabled, onClick);
 
   return (
     <button
-      className={cn(buttonVariants({ color, size, variant, disabled, className }))}
+      className={buttonVariants({ color, size, variant, disabled, className })}
       onClick={createRipple}
-      disabled={disabled ?? false}
+      disabled={disabled }
       {...props}
     >
       {children}
