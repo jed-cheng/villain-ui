@@ -14,7 +14,7 @@ const switchVariants = tv({
       "transition-colors duration-200",
       "data-[checked=false]:bg-default-500 "
     ],
-    knob: [
+    thumb: [
       "rounded-full bg-white origin-right shadow-sm cursor-pointer",
     ]
   },
@@ -46,15 +46,15 @@ const switchVariants = tv({
     size: {
       sm: {
         track: "h-6 w-10",
-        knob: "w-4 h-4"
+        thumb: "w-4 h-4"
       },
       md: {
         track: "h-7 w-12",
-        knob: "w-5 h-5"
+        thumb: "w-5 h-5"
       },
       lg: {
         track: "h-8 w-14",
-        knob: "w-6 h-6"
+        thumb: "w-6 h-6"
       }
     },
   },
@@ -74,7 +74,7 @@ export interface SwitchProps
     keyof SwitchVariants | "color" | 'disbaled'>, 
     SwitchVariants
   {
-
+    thumb?: React.ReactNode;
   }
 
 
@@ -86,9 +86,10 @@ export const Switch: React.FC<SwitchProps> = ({
   defaultChecked,
   onChange,
   className,
+  thumb,
   ...props
 }) => {
-  const { base: baseVariants, track: trackVariants, knob: knobVariants } = switchVariants();
+  const { base: baseVariants, track: trackVariants, thumb: thumbVariants } = switchVariants();
   const isControlled = checked !== undefined;
   const [uncontrolled, setUncontrolled] = useState(defaultChecked ?? false);
   const isChecked = isControlled ? checked : uncontrolled;
@@ -117,7 +118,7 @@ export const Switch: React.FC<SwitchProps> = ({
         data-checked={isChecked}
       >
         <motion.span 
-          className={knobVariants({ size })}
+          className={thumbVariants({ size })}
           initial={{
             x: isChecked ? "50%" : "-50%",
           }}
@@ -132,7 +133,9 @@ export const Switch: React.FC<SwitchProps> = ({
             originX: isChecked? 1 : 0,
             scaleX: 1.1,
           }}
-        />
+        >
+          {thumb}
+        </motion.span>
       </span>
     </label>
   );

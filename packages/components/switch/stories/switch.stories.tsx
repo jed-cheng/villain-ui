@@ -57,7 +57,6 @@ export const Default: Story = {
   render: (args) => <Switch {...args} />,
 };
 
-
 /* Size variants */
 export const Small: Story = {
   render: (args) => <Switch {...args} size="sm" />,
