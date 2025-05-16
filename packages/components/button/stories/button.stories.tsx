@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '../src/index'; // Assuming Button is exported from index.ts
+import { Heart } from 'lucide-react';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -14,23 +15,41 @@ const meta = {
   tags: ['autodocs'],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
-    // Define argTypes if needed, e.g., for controlling props via Storybook UI
-    color: {
+   color: {
       control: { type: 'select' },
       options: ['default', 'primary', 'secondary', 'success', 'warning', 'danger'],
+      description: 'Controls the color scheme of the button',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      }
     },
     size: {
       control: { type: 'select' },
       options: ['sm', 'md', 'lg'],
+      description: 'Controls the size of the button',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'md' },
+      }
     },
     variant: {
       control: { type: 'select' },
-      options: ['solid', 'outline', 'ghost', 'underline'],
+      options: ['solid', 'outline', 'ghost'],
+      description: 'Controls the variant/style of the button',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'solid' },
+      }
     },
     disabled: {
       control: { type: 'boolean' },
-    }
-
+      description: 'When true, the button is disabled and cannot be clicked',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      }
+    },
   },
 
 } satisfies Meta<typeof Button>;
@@ -74,15 +93,30 @@ export const Ghost: Story = {
   render: (args) => <Button {...args} variant='ghost'>Button</Button>,
 };
 
-export const Underline: Story = {
-  render: (args) => <Button {...args} variant='underline'>Button</Button>,
-};
 
 
 
 /* disabled */
 export const Disabled: Story = {
   render: (args) => <Button {...args} disabled>Button</Button>,
+}
+
+/* with icon */
+export const WithIcon: Story = {
+  render: (args) => (
+    <Button {...args}>
+      <Heart />
+      Button
+    </Button>
+  ),
+}
+
+export const IconOnly: Story = {
+  render: (args) => (
+    <Button isIconOnly {...args}>
+      <Heart />
+    </Button>
+  ),
 }
 
 

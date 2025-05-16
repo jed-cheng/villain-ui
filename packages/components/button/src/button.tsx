@@ -7,47 +7,38 @@ import { tv, type VariantProps } from "tailwind-variants";
 const buttonVariants = tv({
   base: [
     'relative overflow-hidden',
-    'transform  transition duration-150',
+    'transform  transition duration-100',
     'inline-flex items-center justify-center',
     'cursor-pointer'
   ],
   variants: {
     color: {
-      default: "bg-gray-600 text-white border-gray-600",
-      primary: "bg-blue-500 text-white border-blue-500 ",
-      secondary: "bg-white text-gray-800 ",
-      danger: "bg-red-500 text-white border-red-500 ",
-      success: "bg-green-500 text-white border-green-500 ",
-      warning: "bg-yellow-500 text-white border-yellow-500 ",
+      default: "bg-default text-white border-default",
+      primary: "bg-primary text-white border-primary",
+      secondary: "bg-secondary text-white border-secondary",
+      danger: "bg-danger text-white border-danger",
+      success: "bg-success text-white border-success",
+      warning: "bg-warning text-white border-warning",
     },
     size: {
-      sm: "px-2 min-w-16 h-8 text-sm gap-1 rounded-sm [&>svg]:max-w-[theme(spacing.7)]",
-      md: "px-4 min-w-20 h-10 text-md gap-2 rounded-md [&>svg]:max-w-[theme(spacing.8)]",
-      lg: "px-6 min-w-24 h-12 text-lg gap-3 rounded-lg [&>svg]:max-w-[theme(spacing.8)]", 
+      sm: "px-2 min-w-16 h-8 text-sm gap-1 rounded-sm",
+      md: "px-4 min-w-20 h-10 text-md gap-2 rounded-md",
+      lg: "px-6 min-w-24 h-12 text-lg gap-3 rounded-lg", 
     },
     disabled: {
       true: "opacity-50 cursor-not-allowed",
-      false: "active:scale-95",
+      false: "active:scale-97",
     },
     variant: {
       solid: null,
-      outline: " text-black border ",
-      ghost: "   text-black",
-      underline: "bg-transparent hover:underline text-black",
+      outline: "border bg-transparent text-default hover:bg-foreground",
+      ghost: "bg-transparent text-default hover:bg-foreground",
     },
-  },
-  compoundVariants: [
-    {
-      color: 'default',
-      variant: 'outline',
-      class: 'bg-transparent  hover:bg-gray-600/50',
-    },
-    {
-      color: 'default',
-      variant: 'ghost',
-      class: 'bg-transparent hover:bg-gray-600/50',
+    isIconOnly: {
+      true: "p-0 min-w-0 aspect-square",
+      false: null,
     }
-  ],
+  },
   defaultVariants: {
     color: 'default',
     size: 'md',
@@ -70,6 +61,7 @@ export const Button: React.FC<ButtonProps> = ({
   color,
   size,
   variant,
+  isIconOnly,
   disabled = false,
   children,
   onClick,
@@ -78,14 +70,17 @@ export const Button: React.FC<ButtonProps> = ({
   const { 
     ripples, 
     createRipple, 
-    handleAnimationComplete 
-  } = useRipples(disabled, onClick);
+    onComplete 
+  } = useRipples(disabled);
 
   return (
     <button
-      className={buttonVariants({ color, size, variant, disabled, className })}
-      onClick={createRipple}
-      disabled={disabled }
+      className={buttonVariants({ color, size, variant, disabled, className, isIconOnly })}
+      onClick={(evt)=> {
+        createRipple(evt);
+        onClick?.(evt);
+      }}
+      disabled={disabled}
       {...props}
     >
       {children}
@@ -94,7 +89,7 @@ export const Button: React.FC<ButtonProps> = ({
           <RippleEffect
             key={ripple.id}
             ripple={ripple}
-            onComplete={handleAnimationComplete}
+            onComplete={onComplete}
           />
         ))}
       </AnimatePresence>

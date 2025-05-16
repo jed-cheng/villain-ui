@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Ripple } from "./ripple-effect";
 
-export function useRipples(disabled: boolean, onClick?: React.MouseEventHandler<HTMLButtonElement>) {
+export function useRipples(disabled: boolean) {
   const [ripples, setRipples] = useState<Ripple[]>([]);
 
   const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -12,12 +12,11 @@ export function useRipples(disabled: boolean, onClick?: React.MouseEventHandler<
     const x = event.clientX - rect.left - size / 2;
     const y = event.clientY - rect.top - size / 2;
     setRipples(prev => [...prev, { id: Date.now(), x, y, size }]);
-    onClick?.(event);
   };
 
-  const handleAnimationComplete = (rippleId: number) => {
+  const onComplete = (rippleId: number) => {
     setRipples(prev => prev.filter(r => r.id !== rippleId));
   };
 
-  return { ripples, createRipple, handleAnimationComplete };
+  return { ripples, createRipple, onComplete };
 }

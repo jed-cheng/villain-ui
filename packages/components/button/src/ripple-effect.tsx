@@ -8,40 +8,35 @@ export interface Ripple {
   size: number;
 }
 
-const defaultRippleVariants = {
-  initial: { scale: 0, opacity: 0 },
-  animate: { scale: 1, opacity: [0, 0.5, 0] }, // Fade in then out
+
+const defaultRippleAnimate = {
+  scale: [0, 1.1],
+  opacity: [0, 0.5, 0],
+  transition: {
+    duration: 0.6,
+    ease: "easeOut",
+    times: [0, 0.3, 1],
+  }
 };
 
-const defaultRippleTransition = {
-  duration: 0.6,
-  ease: 'easeOut',
-  opacity: {
-    duration: 0.6,
-    times: [0, 0.3, 1],
-    ease: 'linear',
-  },
-};
 
 export interface RippleEffectProps extends Omit<HTMLMotionProps<"span">, "ref"> {
   ripple: Ripple;
   onComplete: (id: number) => void;
-  variants?: typeof defaultRippleVariants;
-  transition?: typeof defaultRippleTransition;
 }
 
 export const RippleEffect: React.FC<RippleEffectProps> = ({
   ripple,
   onComplete,
-  variants = defaultRippleVariants,
-  transition = defaultRippleTransition,
+  onAnimationComplete,
+  animate = defaultRippleAnimate,
   style,
   ...props
 }) => {
   return (
     <motion.span
       key={ripple.id} // Key for AnimatePresence
-      style={{
+      style={{ // something wrong with tailwindcss
         position: 'absolute',
         borderRadius: '50%',
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -50,14 +45,14 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
         top: ripple.y,
         width: ripple.size,
         height: ripple.size,
-        transform: 'translate(-50%, -50%)', // Center the ripple
-        ...style, // Merge custom styles
+        transform: 'translate(-50%, -50%)', 
+        ...style,
       }}
-      variants={variants}
-      initial="initial"
-      animate="animate"
-      onAnimationComplete={() => onComplete(ripple.id)} // Notify parent on completion
-      transition={transition}
+      animate={animate}
+      onAnimationComplete={latest => {
+        onComplete(ripple.id);
+        onAnimationComplete?.(latest);
+      }}
       {...props}
     />
   );
