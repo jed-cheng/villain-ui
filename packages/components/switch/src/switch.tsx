@@ -7,80 +7,67 @@ const switchVariants = tv({
   base:[
     "absolute top-0  m-0 p-0 w-full h-full opacity-0 overflow-visible" ,
   ],
+  slots: {
+    track: [
+      "rounded-full px-1",
+      "inline-flex items-center justify-center",
+      "transition-colors duration-200",
+      "data-[checked=false]:bg-default-500 "
+    ],
+    knob: [
+      "rounded-full bg-white origin-right shadow-sm cursor-pointer",
+    ]
+  },
   variants: {
     disabled: {
       true:  "cursor-not-allowed opacity-50",
       false: "cursor-pointer",
     },
     color: {
-      default: "",
-      primary: "",
-      success: "",
-      danger:  "",
-      warning: "",
+      default: {
+        track: "bg-default"
+      },
+      primary: {
+        track: "bg-primary"
+      },
+      secondary: {
+        track: "bg-secondary"
+      },
+      danger: {
+        track: "bg-danger"
+      },
+      success: {
+        track: "bg-success"
+      },
+      warning: {
+        track: "bg-warning"
+      },
     },
     size: {
-      sm: "",
-      md: "",
-      lg: "",
-    }
-  },
-});
-
-const trackVariants = tv({
-  base:[
-    "rounded-full px-1 ",
-    "inline-flex  items-center justify-center",
-    "transition-colors duration-200",
-    "bg-gray-400"
-  ],
-  variants: {
-    color: {
-      default: " data-[checked=true]:bg-gray-800 ",
-      primary: "",
-      success: "",
-      danger:  "",
-      warning: "",
+      sm: {
+        track: "h-6 w-10",
+        knob: "w-4 h-4"
+      },
+      md: {
+        track: "h-7 w-12",
+        knob: "w-5 h-5"
+      },
+      lg: {
+        track: "h-8 w-14",
+        knob: "w-6 h-6"
+      }
     },
-    size: {
-      sm: "h-6 w-11",
-      md: "h-7 w-12",
-      lg: "h-8 w-14",
-    }
-  },
-  compoundVariants: [
-  ],
-  defaultVariants: { 
-    color: "default" ,
-    size: "md",
-  },
-});
-
-const knobVariants = tv({
-  base:[
-    "rounded-full bg-white origin-right shadow-sm cursor-pointer" ,
-  ],
-  variants: {
-    size: {
-      sm: 'w-3 h-3',
-      md: 'w-5 h-5',
-      lg: 'w-7 h-7',
-    }
-
   },
   defaultVariants: {
+    color: "default",
     size: "md",
-  },
-  compoundVariants: [
-
-  ],
+    disabled: false,
+  }
 });
 
 
 
 type SwitchVariants  = VariantProps<typeof switchVariants>;
-type TrackVariants = VariantProps<typeof trackVariants>;
-type KnobVariants  = VariantProps<typeof knobVariants>;
 
 export interface SwitchProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
@@ -101,6 +88,7 @@ export const Switch: React.FC<SwitchProps> = ({
   className,
   ...props
 }) => {
+  const { base: baseVariants, track: trackVariants, knob: knobVariants } = switchVariants();
   const isControlled = checked !== undefined;
   const [uncontrolled, setUncontrolled] = useState(defaultChecked ?? false);
   const isChecked = isControlled ? checked : uncontrolled;
@@ -113,12 +101,11 @@ export const Switch: React.FC<SwitchProps> = ({
     }
   };
 
-
   return (
     <label className=" relative inline-flex max-w-fit items-center justify-center" >
       <input
         type="checkbox"
-        className={switchVariants({ disabled, className })}
+        className={baseVariants({ disabled, className })}
         disabled={disabled}
         checked={isChecked}
         defaultChecked={defaultChecked}
