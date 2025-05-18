@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { useTabs } from "./use-tabs";
 
-interface TabPanelProps extends React.HTMLAttributes<HTMLDivElement> {
-  value: string | number;
+interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: string;
   children: ReactNode;
   className?: string;
 }
 
-export const TabPanel: React.FC<TabPanelProps> = ({ 
+export const TabsContent: React.FC<TabsContentProps> = ({ 
   value, 
   children, 
 }) => {
@@ -23,4 +23,4 @@ return (
     {children}
   </div>
 )};
-TabPanel.displayName = "TabPanel";
+TabsContent.displayName = "TabsContent";

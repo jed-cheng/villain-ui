@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tabs, Tab } from "../src"; // Assuming TabsCursor is internal and shown via Tabs
+import { Tabs, Tab } from "../src";
+import { TabsList } from "../src/tabs-list";
+import { TabsContent } from "../src/tabs-content";
 
 const meta: Meta<typeof Tabs> = {
   title: "Components/Tabs",
@@ -9,15 +11,36 @@ const meta: Meta<typeof Tabs> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    // Define argTypes if needed, e.g., for controlling props via Storybook UI
-  },
-  // Decorator to provide state for controlled Tabs
-  decorators: [
-    // (Story) => {
-    //   const [value, setValue] = useState<string | null>("tab1");
-    //   return <Story args={{ value , onValueChange: setValue }} />;
-    // },
-  ],
+    size: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg'],
+      defaultValue: 'md',
+    },
+    radius: {
+      control: { type: 'select' },
+      options: ['none', 'sm', 'md', 'lg', 'full'],
+      defaultValue: 'md',
+    },
+    color: {
+      control: { type: 'select' },
+      options: ['default', 'primary', 'secondary', 'danger', 'success', 'warning'],
+      defaultValue: 'primary',
+    },
+    orientation: {
+      control: { type: 'radio' },
+      options: ['horizontal', 'vertical'],
+      defaultValue: 'horizontal',
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['solid', 'underline', 'light', 'bordered'],
+      defaultValue: 'solid',
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      defaultValue: false,
+    }
+  }
 };
 
 export default meta;
@@ -28,12 +51,16 @@ type Story = StoryObj<typeof meta>;
 // ============================================================================
 
 export const Default: Story = {
-
   render: (args) => (
     <Tabs {...args}>
-      <Tab value="tab1" title="Tab 1" />
-      <Tab value="tab2" title="Tab 2" />
-      <Tab value="tab3" title="Tab 3" />
+      <TabsList>
+        <Tab value="tab1">Tab 1</Tab>
+        <Tab value="tab2">Tab 2</Tab>
+        <Tab value="tab3">Tab 3</Tab>
+      </TabsList>
+      <TabsContent value="tab1">Content for Tab 1</TabsContent>
+      <TabsContent value="tab2">Content for Tab 2</TabsContent>
+      <TabsContent value="tab3">Content for Tab 3</TabsContent>
     </Tabs>
   ),
 };
@@ -42,9 +69,14 @@ export const Default: Story = {
 export const Vertical: Story = {
   render: (args) => (
     <Tabs {...args} orientation="vertical">
-      <Tab value="tab1" title="Tab 1" />
-      <Tab value="tab2" title="Tab 2" />
-      <Tab value="tab3" title="Tab 3" />
+      <TabsList>
+        <Tab value="tab1">Tab 1</Tab>
+        <Tab value="tab2">Tab 2</Tab>
+        <Tab value="tab3">Tab 3</Tab>
+      </TabsList>
+      <TabsContent value="tab1">Content for Tab 1</TabsContent>
+      <TabsContent value="tab2">Content for Tab 2</TabsContent>
+      <TabsContent value="tab3">Content for Tab 3</TabsContent>
     </Tabs>
   ),
 };
@@ -53,29 +85,29 @@ export const Vertical: Story = {
 export const Underline: Story = {
   render: (args) => (
     <Tabs {...args} variant="underline">
-      <Tab value="tab1" title="Tab 1" />
-      <Tab value="tab2" title="Tab 2" />
-      <Tab value="tab3" title="Tab 3" />
+      <TabsList>
+        <Tab value="tab1">Tab 1</Tab>
+        <Tab value="tab2">Tab 2</Tab>
+        <Tab value="tab3">Tab 3</Tab>
+      </TabsList>
+      <TabsContent value="tab1">Content for Tab 1</TabsContent>
+      <TabsContent value="tab2">Content for Tab 2</TabsContent>
+      <TabsContent value="tab3">Content for Tab 3</TabsContent>
     </Tabs>
   ),
 }
 
-export const Light: Story = {
+export const Ghost: Story = {
   render: (args) => (
-    <Tabs {...args} variant="light">
-      <Tab value="tab1" title="Tab 1" />
-      <Tab value="tab2" title="Tab 2" />
-      <Tab value="tab3" title="Tab 3" />
-    </Tabs>
-  ),
-};
-
-export const Bordered: Story = {
-  render: (args) => (
-    <Tabs {...args} variant="bordered">
-      <Tab value="tab1" title="Tab 1" />
-      <Tab value="tab2" title="Tab 2" />
-      <Tab value="tab3" title="Tab 3" />
+    <Tabs {...args} variant="ghost">
+      <TabsList>
+        <Tab value="tab1">Tab 1</Tab>
+        <Tab value="tab2">Tab 2</Tab>
+        <Tab value="tab3">Tab 3</Tab>
+      </TabsList>
+      <TabsContent value="tab1">Content for Tab 1</TabsContent>
+      <TabsContent value="tab2">Content for Tab 2</TabsContent>
+      <TabsContent value="tab3">Content for Tab 3</TabsContent>
     </Tabs>
   ),
 };
@@ -84,25 +116,33 @@ export const Bordered: Story = {
 
 
 export const Disabled: Story = {
-
   render: (args) => ( 
     <Tabs {...args} disabled>
-      <Tab value="tab1" title="Tab 1" />
-      <Tab value="tab2" title="Tab 2" />
-      <Tab value="tab3" title="Tab 3" />
+      <TabsList>
+        <Tab value="tab1">Tab 1</Tab>
+        <Tab value="tab2">Tab 2</Tab>
+        <Tab value="tab3">Tab 3</Tab>
+      </TabsList>
+      <TabsContent value="tab1">Content for Tab 1</TabsContent>
+      <TabsContent value="tab2">Content for Tab 2</TabsContent>
+      <TabsContent value="tab3">Content for Tab 3</TabsContent>
     </Tabs>
   ),
 };
 
 export const DisabledTab: Story = {
-
-    render: (args) => (
-      <Tabs {...args}>
-        <Tab value="tab1" title="Tab 1" />
-        <Tab value="tab2" title="Tab 2" disabled />
-        <Tab value="tab3" title="Tab 3" />
-      </Tabs>
-    ),
-  };
+  render: (args) => (
+    <Tabs {...args}>
+      <TabsList>
+        <Tab value="tab1">Tab 1</Tab>
+        <Tab value="tab2" disabled>Tab 2</Tab>
+        <Tab value="tab3">Tab 3</Tab>
+      </TabsList>
+      <TabsContent value="tab1">Content for Tab 1</TabsContent>
+      <TabsContent value="tab2">Content for Tab 2</TabsContent>
+      <TabsContent value="tab3">Content for Tab 3</TabsContent>
+    </Tabs>
+  ),
+};
 
 

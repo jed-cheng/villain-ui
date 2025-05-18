@@ -2,11 +2,11 @@ import {
   createContext, 
   useContext, 
 } from 'react';
-import { TabsVariants } from './tabs';
 
-export interface TabsContextProps extends TabsVariants{
+export interface TabsContextProps{
   value: string | null;
   setValue: (next: string | null) => void;
+  disabled?: boolean;
 } 
 
 const TabsContext = createContext<TabsContextProps | null>(null);

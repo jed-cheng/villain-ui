@@ -1,4 +1,4 @@
 export { Tabs, type TabsProps } from './tabs';
 export { Tab, type TabProps } from './tab';
-export { TabPanel } from './tab-panel'; 
+export { TabsContent as TabPanel } from './tabs-content'; 
 export { useTabs } from './use-tabs';

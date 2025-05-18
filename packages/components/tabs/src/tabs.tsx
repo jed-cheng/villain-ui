@@ -1,52 +1,123 @@
-import React, { useCallback, useId, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { TabsProvider, TabsContextProps } from './use-tabs';
-import {  LayoutGroup } from 'motion/react';
 import { tv, type VariantProps } from 'tailwind-variants';
+import { VariantsProvider } from './use-variants';
 
-const tabsVariants = tv({
-  base: [
-    'flex p-1 h-fit gap-2 items-center flex-nowrap ',
-  ],
+export const tabsVariants = tv({
+  base: '',
+  slots: {
+    tabsList: [
+      'flex p-1 h-fit gap-2 items-center flex-nowrap'
+    ],
+    tab: [
+    'relative flex  justify-center items-center cursor-pointer',
+    "w-full px-3 py-1 z-10 ",
+    ],
+    tabsContent: [
+
+    ],
+    tabsCursor: [
+      'absolute z-0 inset-0',
+      'bg-default-600'
+    ]
+  },
   variants: {
     size: {
-      sm: "gap-1",
-      md: "gap-2", 
-      lg: "gap-3", 
+      sm: {
+        tab: "h-7 text-tiny",
+        tabsList: 'gap-1',
+      },
+      md: {
+        tab: "h-8 text-small",
+        tabsList: 'gap-2',
+      },
+      lg: {
+        tab: "h-9 text-medium",
+        tabsList: 'gap-3',
+      }
     },
     radius: {
-      none: "rounded-none",
-      sm: "rounded-sm",
-      md: "rounded-md",
-      lg: "rounded-lg", 
-      full: " rounded-full",
+      none: {
+        tabsCursor: "rounded-none",
+        tab: "rounded-none",
+        tabsList: "rounded-none",
+      },
+      sm: {
+        tabsCursor: "rounded-sm",
+        tab: "rounded-sm",
+        tabsList: "rounded-sm",
+      },
+      md: {
+        tabsCursor: "rounded-md",
+        tab: "rounded-md",
+        tabsList: "rounded-md",
+      },
+      lg: {
+        tabsCursor: "rounded-lg",
+        tab: "rounded-lg",
+        tabsList: "rounded-lg",
+      },
+      full: {
+        tabsCursor: "rounded-full",
+        tab: "rounded-full",
+        tabsList: "rounded-full",
+      },
     },
     color: {
-      default: "bg-gray-700 text-white",
-      primary: "bg-blue-500 text-white border-transparent",
-      secondary: "bg-white text-gray-800 border-gray-400",
-      danger: "bg-red-500 text-white border-transparent",
-      success: "bg-green-500 text-white border-transparent",
-      warning: "bg-yellow-500 text-white border-transparent",
+      default: {
+        tabsList: "bg-default text-white",
+      },
+      primary: {
+        tabsList: "bg-primary text-white",
+      },
+      secondary: {
+        tabsList: "bg-secondary text-white",
+      },
+      danger: {
+        tabsList: "bg-danger text-white",
+      },
+      success: {
+        tabsList: "bg-success text-white",
+      },
+      warning: {
+        tabsList: "bg-warning text-white",
+      },
+
     },
     orientation: {
-      horizontal: "flex-row",
-      vertical: "flex-col",
+      horizontal: {
+        tabsList: "flex-row",
+      },
+      vertical: {
+        tabsList: "flex-col",
+      },
     },
     variant: {
       solid: null,
-      underline: "bg-transparent",
-      light: "bg-transparent",
-      bordered: "border-b bg-transparent",
+      underline: {
+        tabsCursor: "bg-transparent border-b-2 border-white rounded-none",
+      },
+      ghost: { 
+        tabsList: "bg-transparent",
+        tabsCursor: "bg-default/20 backdrop-blur-sm", 
+        tab: "text-default-foreground hover:text-default-900",
+      },
     },
     disabled: {
-      true: "opacity-50 cursor-not-allowed",
-      false: null,
+      true: {
+        tab: "opacity-50 cursor-default",
+        tabsCursor: "opacity-50 cursor-default",
+      },
+      false: {
+        tab: "hover:text-gray-400 transition-colors duration-300",
+        tabsCursor: "opacity-100 cursor-pointer",
+      },
     }
   },
   defaultVariants: {
     size: 'md',
     radius: 'md',
-    color: 'primary', 
+    color: 'default', 
     orientation: 'horizontal',
   },
 });
@@ -54,8 +125,8 @@ const tabsVariants = tv({
 export type TabsVariants = VariantProps<typeof tabsVariants>;
 
 export interface TabsProps
-  extends Omit<React.HTMLAttributes<HTMLUListElement>, keyof TabsVariants>, // Exclude color from HTML attributes
-    TabsVariants {
+  extends TabsVariants {
+  children: React.ReactNode;
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string | null) => void;
@@ -81,7 +152,6 @@ export const Tabs: React.FC<TabsProps> = ({
   value: controlled,
   onValueChange,
   children,
-  className,
   size,
   radius,
   color, 
@@ -89,7 +159,6 @@ export const Tabs: React.FC<TabsProps> = ({
   orientation,
   variant,
 }) => {
-  const layoutId = useId();
   const isControlled = controlled !== undefined;
   const [uncontrolled, setUncontrolled] = useState(defaultValue ?? getFirstChildValue(children));
 
@@ -107,23 +176,28 @@ export const Tabs: React.FC<TabsProps> = ({
   const contextValue: TabsContextProps = {
     value: current,
     setValue,
+    disabled
+  };
+
+  const variants = {
     size,
     color, 
     radius, 
     disabled,
+    orientation,
     variant
-  };
+  }
 
   return (
     <TabsProvider value={contextValue}>
-      <ul
-        className={tabsVariants({ size, radius, color, orientation, className })}
-      >
-        <LayoutGroup id={layoutId}>
-          {children}
-        </LayoutGroup>
-      </ul>
+      <VariantsProvider value={variants}>
+        {children}
+      </VariantsProvider>
     </TabsProvider>
   )
 };
+
 Tabs.displayName = "Tabs";
+
+
+
