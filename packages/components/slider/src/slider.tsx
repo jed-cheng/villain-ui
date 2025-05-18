@@ -1,168 +1,123 @@
-import React from 'react';
+import {  PanHandlers, TapHandlers, motion } from 'motion/react';
+import React, { useRef, useState } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 const sliderVariants = tv({
-  base: 'relative flex items-center select-none touch-none',
+  base: 'relative flex items-center',
   slots: {
-    track: 'bg-gray-200 relative grow',
-    range: 'absolute bg-blue-500',
-    thumb:
-      'block bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-50',
+    track: 'relative flex items-center grow h-3 rounded-full bg-default-500',
+    range: 'absolute h-full rounded-full z-0',
+    thumb: [
+      'block bg-white shadow-md ring-1 z-10 absolute',
+    ]
+      
   },
   variants: {
-    orientation: {
-      horizontal: 'w-full h-5 flex-row',
-      vertical: 'w-5 h-full flex-col',
-    },
-    size: {
-      sm: {},
-      md: {},
-      lg: {},
-    },
     color: {
       default: {
-        range: 'bg-gray-600',
-        thumb: 'focus:ring-gray-500',
+        range: 'bg-black',  
+        thumb: 'ring-default ring-2 ',
       },
       primary: {
-        range: 'bg-blue-500',
-        thumb: 'focus:ring-blue-500',
+        range: 'bg-primary',
       },
       secondary: {
-        range: 'bg-purple-500',
-        thumb: 'focus:ring-purple-500',
+        range: 'bg-secondary',
       },
       success: {
-        range: 'bg-green-500',
-        thumb: 'focus:ring-green-500',
-      },
-      warning: {
-        range: 'bg-yellow-500',
-        thumb: 'focus:ring-yellow-500',
+        range: 'bg-success',
       },
       danger: {
-        range: 'bg-red-500',
-        thumb: 'focus:ring-red-500',
+        range: 'bg-danger',
+      },
+    },
+    size: {
+      sm: {
+        track: 'h-2',
+        thumb: 'w-4 h-4',
+      },
+      md: {
+        track: 'h-3',
+        thumb: 'w-5 h-5',
+      },
+      lg: {
+        track: 'h-4',
+        thumb: 'w-6 h-6',
       },
     },
     radius: {
-      none: { track: 'rounded-none', range: 'rounded-none', thumb: 'rounded-none' },
-      sm: { track: 'rounded-sm', range: 'rounded-sm', thumb: 'rounded-sm' },
-      md: { track: 'rounded-md', range: 'rounded-md', thumb: 'rounded-md' },
-      lg: { track: 'rounded-lg', range: 'rounded-lg', thumb: 'rounded-lg' },
-      full: { track: 'rounded-full', range: 'rounded-full', thumb: 'rounded-full' },
+      sm: {
+        thumb: 'rounded-sm',
+      },
+      md: {
+        thumb: 'rounded-md',
+      },
+      lg: {
+        thumb: 'rounded-lg',
+      },
+      full: {
+        thumb: 'rounded-full',
+      }
     },
     disabled: {
       true: {
-        thumb: 'bg-gray-300',
-        track: 'bg-gray-100',
-        range: 'bg-gray-400',
+        base: 'opacity-50 ',
+      },
+      false: {
+        thumb: ' active:cursor-grabbing'
       },
     },
   },
-  compoundVariants: [
-    // Horizontal sizes
-    {
-      orientation: 'horizontal',
-      size: 'sm',
-      class: {
-        track: 'h-0.5',
-        range: 'h-full',
-        thumb: 'w-3 h-3',
-      },
-    },
-    {
-      orientation: 'horizontal',
-      size: 'md',
-      class: {
-        track: 'h-1',
-        range: 'h-full',
-        thumb: 'w-4 h-4',
-      },
-    },
-    {
-      orientation: 'horizontal',
-      size: 'lg',
-      class: {
-        track: 'h-2',
-        range: 'h-full',
-        thumb: 'w-6 h-6',
-      },
-    },
-    // Vertical sizes
-    {
-      orientation: 'vertical',
-      size: 'sm',
-      class: {
-        track: 'w-0.5',
-        range: 'w-full',
-        thumb: 'w-3 h-3',
-      },
-    },
-    {
-      orientation: 'vertical',
-      size: 'md',
-      class: {
-        track: 'w-1',
-        range: 'w-full',
-        thumb: 'w-4 h-4',
-      },
-    },
-    {
-      orientation: 'vertical',
-      size: 'lg',
-      class: {
-        track: 'w-2',
-        range: 'w-full',
-        thumb: 'w-6 h-6',
-      },
-    },
-  ],
+
   defaultVariants: {
-    orientation: 'horizontal',
+    color: 'default',
     size: 'md',
-    color: 'primary',
     radius: 'full',
-    disabled: false,
   },
 });
 
 type SliderVariants = VariantProps<typeof sliderVariants>;
 
 export interface SliderProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, keyof SliderVariants | 'value' | 'defaultValue' | 'onChange'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, keyof SliderVariants | 'value' | 'defaultValue'>,
     SliderVariants {
-  value?: number[];
-  defaultValue?: number[];
-  onValueChange?: (value: number[]) => void;
+  value?: number;
+  defaultValue?: number;
   min?: number;
   max?: number;
   step?: number;
 }
 
-export const Slider = React.forwardRef<
-  HTMLDivElement,
-  SliderProps
->(({
+const calcPercent = (value: number, min: number, max: number): number => {
+  return ((value - min) / (max - min)) * 100;
+};
+
+const calcValue = (
+  percentage: number, 
+  min: number, 
+  max: number, 
+  step: number
+): number => {
+  return Math.round((percentage * (max - min) + min) / step) * step;
+};
+
+
+export const Slider = ({
+  value,
+  defaultValue,
   className,
   disabled,
-  orientation,
   size,
   color,
   radius,
-  value: valueProp,
-  defaultValue = [0],
-  onValueChange,
+  onChange,
   min = 0,
   max = 100,
   step = 1,
   ...props
-}, ref) => {
-  const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const value = valueProp !== undefined ? valueProp : internalValue;
+}: SliderProps) => {
 
   const { base, track, range, thumb } = sliderVariants({
-    orientation,
     size,
     color,
     radius,
@@ -170,34 +125,87 @@ export const Slider = React.forwardRef<
     className,
   });
 
-  // TODO: Implement slider logic for dragging, keyboard navigation, etc.
+  const [uncontrolled, setUncontrolled] = useState(defaultValue ?? min);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const percentage = Math.max(0, Math.min(100, ((value[0] - min) / (max - min)) * 100));
+  const isControlled = value !== undefined;
+  const current = isControlled ? value : uncontrolled;
+  const percent = calcPercent(current, min, max);
+  
 
-  const rangeStyle = orientation === 'horizontal' ? { width: `${percentage}%` } : { height: `${percentage}%` };
-  const thumbStyle = orientation === 'horizontal' 
-    ? { left: `calc(${percentage}% - ${sliderVariants.defaultVariants.size === 'sm' ? '0.375rem' : sliderVariants.defaultVariants.size === 'md' ? '0.5rem' : '0.75rem'})` } // Adjust based on thumb width
-    : { bottom: `calc(${percentage}% - ${sliderVariants.defaultVariants.size === 'sm' ? '0.375rem' : sliderVariants.defaultVariants.size === 'md' ? '0.5rem' : '0.75rem'})` }; // Adjust based on thumb height
 
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    if (!isControlled) {
+      setUncontrolled(evt.target.valueAsNumber);
+    } else {
+      onChange?.(evt);
+    }
+  };
+
+
+  const handleThumbPan:PanHandlers['onPan']= (_evt, info) => {
+    if (disabled || !trackRef.current) return;
+
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const offset = info.point.x- trackRect.left;
+    const percent = Math.max(0, Math.min(1, offset / trackRect.width));
+    const newValue = calcValue(percent, min, max, step);
+    if (!isControlled) {
+      setUncontrolled(newValue);
+    }
+  } 
+
+  const handleTrackTap: TapHandlers['onTap'] = (_evt, info) => {
+    if (disabled || !trackRef.current) return;
+    
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const offset =info.point.x  - trackRect.left;
+    const percentage = Math.max(0, Math.min(1, offset / trackRect.width));
+    const newValue = calcValue(percentage, min, max, step);
+    
+    if (!isControlled) {
+      setUncontrolled(newValue);
+    }
+    
+  };
 
   return (
-    <div ref={ref} className={base()}>
-      <span className={track()}>
-        <span className={range()} style={rangeStyle} />
-      </span>
-      <span
-        className={thumb()}
-        role="slider"
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuenow={value[0]}
-        aria-orientation={orientation}
-        tabIndex={disabled ? -1 : 0}
-        style={thumbStyle}
-        // TODO: Add event handlers for keyboard and mouse interaction
+    <div 
+      className={base()}
+      {...props}
+    >
+      <motion.div 
+        className={track()}
+        ref={trackRef}
+        onTap={handleTrackTap}
+      >
+        <div 
+          className={range()} 
+          style={{ 
+            width: `${percent}%`,
+          }}
+        />
+        <motion.div
+          className={thumb()}
+          style={{
+            left: `${percent}%`,
+            transform: 'translateX(-50%)',
+          }}
+          onPan = {handleThumbPan}
+        />
+      </motion.div>
+      <input
+        type="range"
+        className="hidden"
+        min={min}
+        max={max}
+        step={step}
+        value={current}
+        onChange={handleChange}
+        disabled={disabled}
       />
     </div>
   );
-});
+}
 
 Slider.displayName = 'Slider';
