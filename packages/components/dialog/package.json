@@ -1,8 +1,8 @@
 {
-  "name": "@villainui/dialog",
+  "name": "@villainui/dialog", 
   "version": "0.1.0",
-  "private": false,
-  "description": "A dialog component",
+  "private": false, 
+  "description": "A simple dialog component",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -34,3 +34,4 @@
   },
   "sideEffects": false
 }
+

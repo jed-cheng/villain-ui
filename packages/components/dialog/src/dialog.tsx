@@ -1,90 +1,118 @@
-import React, { useState, useEffect, createContext, useContext, useId, useRef, ReactEventHandler, useImperativeHandle, ToggleEventHandler } from "react";
+import React, { useEffect,  useRef } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
+import { VariantsProvider } from "./use-variants";
 
-// Dialog styles using tailwind-variants
-const dialogVariants = tv({
+export const dialogVariants = tv({
   base: [
-    'w-full h-screen fixed inset-0 z-50',
-    'flex items-center justify-center',
-    'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
-    'p-0 m-0 border-none outline-none',
-    '[&:not([open])]:opacity-0 [&:not([open])]:pointer-events-none',
-    '[&::backdrop]:transition-opacity [&::backdrop]:duration-200'
+    'backdrop:bg-black/80',
+    'open:flex open:justify-center open:flex-col',
   ],
+  slots: {
+    header: 'p-4', 
+    body: 'p-4 flex-grow overflow-auto',
+    footer: 'p-4',
+  },
   variants: {
-    position: {
-      center: "flex items-center justify-center",
-      top: "flex items-start justify-center pt-16",
-      bottom: "flex items-end justify-center pb-16",
+    color: {
+      default: {
+        base: 'bg-default text-white',
+      }
     },
-    fullScreen: {
-      true: "::backdrop:bg-background",
-      false: "",
+    size: {
+      sm: {
+        base: 'w-80 min-h-80 ' 
+      },
+      md: {
+        base: 'w-96 min-h-96 '
+      },
+      lg: {
+        base: 'w-[32rem] min-h-[32rem] '
+      }
     },
+    radius: {
+      sm: {
+        base: 'rounded-sm'
+      },
+      md: {
+        base: 'rounded-md'
+      },
+      lg: {
+        base: 'rounded-lg'
+      },
+      full: {
+        base: 'rounded-full'
+      }
+    },
+    placement: {
+      top: {
+        base: 'top-4 left-1/2 -translate-x-1/2 ',
+      },
+      bottom: {
+        base: 'bottom-4 left-1/2 -translate-x-1/2 !mt-auto !mb-0',// !mb-0 to prevent margin collapse
+      },
+      center: {
+        base: 'top-1/2 left-1/2 -translate-1/2 !m-0',
+      }
+    }
   },
   defaultVariants: {
-    position: "center",
-    fullScreen: false,
+    color: 'default',
+    size: 'md',
+    radius: 'md',
+    placement: 'center',
   },
 });
 
 
+export type DialogVariants = VariantProps<typeof dialogVariants>;
 
 
 export interface DialogProps 
-  extends React.DialogHTMLAttributes<HTMLDialogElement> {
-    onOpen?: Function
-    defaultOpen?: boolean
+  extends Omit<React.DialogHTMLAttributes<HTMLDialogElement>, keyof DialogVariants>, DialogVariants {
 }
 
 export function Dialog({
-  open,
-  defaultOpen = false,
+  open = false,
   children,
   className,
-  onClose,
-  onOpen,
-  onToggle,
+  color,
+  placement,
+  size,
+  radius,
   ...props
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-
-  const [isOpen, setIsOpen] = useState(open || defaultOpen);
-
-  const handleOpen = () => {
-
-  }
-
-  const handleClose: ReactEventHandler<HTMLDialogElement> = (evt) => {
-    console.log("close", evt);
-  }
-
-  const handleToggle: ToggleEventHandler<HTMLDialogElement> = (evt) => {
-    if ( !dialogRef.current) return;
-    if (dialogRef.current.open) {
-      handleOpen();
-    } else {
-      handleClose(evt);
-    }
-  }
-
+  const { base } = dialogVariants({ color, size, placement, radius, className });
 
   useEffect(() => {
     if (!dialogRef.current) return;
     const dialog = dialogRef.current;
 
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
+    if (open && !dialog.open) {
+      dialog.showModal();
+    };
+    if (!open && dialog.open) {
+      dialog.close();
+    };
   }, [open]);
 
+
+  const variants = {
+    color,
+    size,
+    placement,
+    radius
+  }
+
   return (
+    <VariantsProvider value={variants}>
       <dialog 
         ref={dialogRef}
-        onClose={handleClose}
-        onToggle={handleToggle}
+        className={base()}
         {...props}
       >
         {children}
       </dialog>
+    </VariantsProvider>
   );
 }

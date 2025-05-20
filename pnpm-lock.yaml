@@ -215,6 +215,24 @@ importers:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
 
+  packages/components/dialog:
+    devDependencies:
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+
+  packages/components/slider:
+    devDependencies:
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+
   packages/components/switch:
     devDependencies:
       react:
