@@ -1,4 +1,4 @@
-import React, { useEffect,  useRef } from "react";
+import { useRef } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 import { VariantsProvider } from "./use-variants";
 import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
