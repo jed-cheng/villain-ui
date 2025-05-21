@@ -36,7 +36,7 @@ export const Basic: Story = {
         >
           Open Dialog
         </button>
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open}>
           <DialogHeader>
             <h2>Dialog Title</h2>
           </DialogHeader>
@@ -142,6 +142,52 @@ export const Placements: Story = {
             <DialogFooter>
               <button
                 onClick={() => setOpenPlacement(null)}
+                className="bg-gray-300 text-black p-2 rounded"
+              >
+                Close
+              </button>
+            </DialogFooter>
+          </Dialog>
+        ))}
+      </div>
+    );
+  },
+};
+
+// Backdrop variants example
+export const Backdrops: Story = {
+  render: () => {
+    const [openBackdrop, setOpenBackdrop] = React.useState<null | 'opaque' | 'blur' | 'transparent'>(null);
+    const backdropVariants = ['opaque', 'blur', 'transparent'] as const;
+
+    return (
+      <div className="flex space-x-2">
+        {backdropVariants.map((backdrop) => (
+          <button
+            key={backdrop}
+            onClick={() => setOpenBackdrop(backdrop)}
+            className="bg-yellow-500 text-black p-2 rounded"
+          >
+            Open {backdrop} Backdrop
+          </button>
+        ))}
+        {backdropVariants.map((backdrop) => (
+          <Dialog
+            key={`dialog-${backdrop}`}
+            open={openBackdrop === backdrop}
+            backdrop={backdrop} // Make sure your Dialog component accepts and uses this prop
+            onClose={() => setOpenBackdrop(null)}
+          >
+            <DialogHeader>
+              <h2>{backdrop.charAt(0).toUpperCase() + backdrop.slice(1)} Backdrop Dialog</h2>
+            </DialogHeader>
+            <DialogBody>
+              <p>This dialog has a <strong>{backdrop}</strong> backdrop.</p>
+              <p>Observe the effect behind the dialog.</p>
+            </DialogBody>
+            <DialogFooter>
+              <button
+                onClick={() => setOpenBackdrop(null)}
                 className="bg-gray-300 text-black p-2 rounded"
               >
                 Close
