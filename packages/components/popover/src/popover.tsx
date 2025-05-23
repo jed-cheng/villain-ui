@@ -1,6 +1,6 @@
 import { tv, type VariantProps } from "tailwind-variants";
 import { PopoverProvider } from "./use-popover";
-import React from "react";
+import React, { useCallback } from "react";
 import { VariantsProvider } from "./use-variants";
 
 const popoverVariants = tv({
@@ -20,36 +20,40 @@ const popoverVariants = tv({
       'right-start': {},
       'right-end': {},
     },
-    side: {
-      top: {},
-      bottom: {},
-      left: {},
-      right: {},
-    },
-    align: {
-      start: {},
-      center: {},
-      end: {},
-    },
   },
 
 })
 
 export type PopoverVariants = VariantProps<typeof popoverVariants>;
-export type PopoverPlacementType = PopoverVariants['placement'];
 
 export interface PopoverProps
   extends PopoverVariants {
     children: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    defaultOpen?: boolean;
     offset?: number;
   }
 
 export const Popover: React.FC<PopoverProps> = ({
   children,
   placement,
-
+  open,
+  onOpenChange,
+  defaultOpen = false,
+  offset = 4,
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const isControlled = open !== undefined;
+  const [uncontrolled, setUncontrolled] = React.useState(defaultOpen || false);
+  const isOpen = isControlled ? open : uncontrolled;
+  const setIsOpen = useCallback((open: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(open);
+    } else {
+      setUncontrolled(open);
+    }
+  }, [isControlled, onOpenChange]);
+
   const triggerRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (

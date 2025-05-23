@@ -2,7 +2,7 @@ import React, { createContext } from "react";
 
 export interface PopoverContextProps {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOpen: (open: boolean) => void;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
 }
 

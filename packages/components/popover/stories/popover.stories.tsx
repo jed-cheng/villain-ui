@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Popover, PopoverTrigger, PopoverContent } from '../src';
+import React from 'react';
 
 // Basic meta-information for the Popover component stories
 const meta: Meta<typeof Popover> = {
@@ -52,6 +53,32 @@ export const Default: Story = {
       </PopoverContent>
     </Popover>
   ),
+  args: {
+    placement: 'bottom',
+  },
+};
+
+export const Controlled: Story = {
+  render: (args) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <div
+        >
+          isOpen: {isOpen ? 'true' : 'false'}
+        </div>
+        <Popover {...args} open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger>Controlled Popover</PopoverTrigger>
+          <PopoverContent>
+            <div style={{ padding: '16px', minWidth: '200px' }}>
+              <p>This is a controlled popover.</p>
+              <p>Its open state is managed externally.</p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+    );
+  },
   args: {
     placement: 'bottom',
   },

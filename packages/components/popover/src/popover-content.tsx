@@ -1,7 +1,7 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePopover } from "./use-popover";
 import { useVariants } from "./use-variants";
-import { type PopoverPlacementType } from "./popover";
+import { type PopoverVariants } from "./popover";
 
 export interface PopoverContentProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -10,7 +10,7 @@ export interface PopoverContentProps
 const calcPosition = (
   trig: DOMRect,
   cont: DOMRect,
-  placement: PopoverPlacementType,
+  placement: PopoverVariants["placement"],
   offset: number = 4,
 ) => {
   let top = trig.bottom + window.scrollY;
@@ -68,9 +68,12 @@ const calcPosition = (
       break;
   }
 
-
   return { top, left };
 }
+
+/* TODO: add collision detection */
+// const collisionDetection = ()=>{}
+
 
 
 export const PopoverContent: React.FC<PopoverContentProps> = ({
@@ -106,15 +109,15 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
       window.removeEventListener("resize", updatePos);
       window.removeEventListener("scroll", updatePos);
     };
-}, [isOpen, variants.placement]);
+}, [isOpen, variants]);
 
 
 
 
   useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    isOpen ? el.showPopover() : el.hidePopover();
+    const cont = contentRef.current;
+    if (!cont) return;
+    isOpen ? cont.showPopover() : cont.hidePopover();
   }, [isOpen]);
 
 
