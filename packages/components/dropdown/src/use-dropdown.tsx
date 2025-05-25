@@ -2,10 +2,13 @@ import {
   createContext, 
   useContext, 
 } from 'react';
+import { type DropdownVariants } from './dropdown';
 
 export interface DropdownContextProps{
-  open: boolean;
-  setOpen: (next: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  variants: DropdownVariants
 } 
 
 const DropdownContext = createContext<DropdownContextProps | null>(null);

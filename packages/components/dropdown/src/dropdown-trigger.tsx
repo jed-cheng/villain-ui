@@ -1,5 +1,8 @@
+import { DropdownVariants, trigger } from "./dropdown";
+import { useDropdown } from "./use-dropdown";
+
 export interface DropdownTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, DropdownVariants {
 }
 
 export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
@@ -7,9 +10,15 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
   className,
   ...props
 }) => {
+  const { isOpen, setIsOpen, triggerRef, variants } = useDropdown();
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (evt) => {
+    setIsOpen(!isOpen);
+  }
   return (
     <button
-      className={className}
+      ref={triggerRef}
+      onClick={handleClick}
+      className={trigger({...variants, className })}
       {...props}
     >
       {children}
