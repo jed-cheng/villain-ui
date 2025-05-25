@@ -1,68 +1,67 @@
-import { useRef } from "react";
+import { useMemo, useState } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
-import { VariantsProvider } from "./use-variants";
-import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
+import { DialogProvider } from "./use-dialog";
 
 export const dialogVariants = tv({
-  base: [
-    'open:flex open:justify-center open:flex-col',
-  ],
+  base: [],
   slots: {
+    content: 'open:flex open:justify-center open:flex-col',
     header: 'p-4', 
     body: 'p-4 flex-grow overflow-auto',
     footer: 'p-4',
+    trigger: '',
   },
   variants: {
     color: {
       default: {
-        base: 'bg-default text-white',
+        content: 'bg-default text-white',
       }
     },
     size: {
       sm: {
-        base: 'w-80 min-h-80 ' 
+        content: 'w-80 min-h-80 ' 
       },
       md: {
-        base: 'w-96 min-h-96 '
+        content: 'w-96 min-h-96 '
       },
       lg: {
-        base: 'w-[32rem] min-h-[32rem] '
+        content: 'w-[32rem] min-h-[32rem] '
       }
     },
     radius: {
       sm: {
-        base: 'rounded-sm'
+        content: 'rounded-sm'
       },
       md: {
-        base: 'rounded-md'
+        content: 'rounded-md'
       },
       lg: {
-        base: 'rounded-lg'
+        content: 'rounded-lg'
       },
       full: {
-        base: 'rounded-full'
+        content: 'rounded-full'
       }
     },
     placement: {
       top: {
-        base: 'top-4 left-1/2 -translate-x-1/2 ',
+        content: 'top-4 left-1/2 -translate-x-1/2 ',
       },
       bottom: {
-        base: 'bottom-4 left-1/2 -translate-x-1/2 !mt-auto !mb-0',// !mb-0 to prevent margin collapse
+        content: 'bottom-4 left-1/2 -translate-x-1/2 !mt-auto !mb-0',// !mb-0 to prevent margin collapse
       },
       center: {
-        base: 'top-1/2 left-1/2 -translate-1/2 !m-0',
+        content: 'top-1/2 left-1/2 -translate-1/2 !m-0',
       }
     },
     backdrop: {
       opaque: {
-        base: 'backdrop:bg-background/50',
+        content: 'backdrop:bg-background/50',
       },
       blur: {
-        base: 'backdrop:backdrop-blur-xs',
+        content: 'backdrop:backdrop-blur-xs',
       },
       transparent: {
-        base: 'backdrop:opacity-0',
+        content: 'backdrop:opacity-0',
       },
     }
   },
@@ -75,79 +74,59 @@ export const dialogVariants = tv({
   },
 });
 
+export const { content, header, body, footer, trigger } = dialogVariants();
 
 export type DialogVariants = VariantProps<typeof dialogVariants>;
 
 
 export interface DialogProps 
-  extends Omit<HTMLMotionProps<'dialog'>, keyof DialogVariants>, DialogVariants {
+  extends DialogVariants {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
 }
-
-
-const defaultVariants = {
-  opened: { opacity: 1, scale: 1 },
-  closed: { opacity: 0, scale: 0.8 },
-}
-
-type AnimationVariants = keyof typeof defaultVariants;
 
 
 export function Dialog({
-  open = false,
-  children,
-  className,
+  open,
+  defaultOpen,
+  onOpenChange,
   color,
   placement,
   size,
   radius,
   backdrop,
-  ...props
+  children,
 }: DialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const { base } = dialogVariants({ color, size, placement, radius, backdrop, className });
+  const isControlled = open !== undefined;
+  const [ uncontrolled, setUncontrolled ] = useState(defaultOpen ?? false);
+  const isOpen = isControlled ? open : uncontrolled;
 
 
-  const handleAnimationStart = (variant:AnimationVariants) => {
-    if (dialogRef.current && variant === 'opened') {
-      dialogRef.current?.showModal();
-    }
-  }
+  const setIsOpen = (open: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(open);
+      } else {
+        setUncontrolled(open);
+      }
+    };
 
-  const handleAnimationEnd = (variant:AnimationVariants) => {
-    if (dialogRef.current && variant === 'closed') {
-      dialogRef.current?.close();
-    }
-  }
-
-
-  const variants: DialogVariants = {
+  const variants = useMemo(() => ({
     color,
-    size,
     placement,
+    size,
     radius,
     backdrop
-  }
+  }), [color, placement, size, radius, backdrop]);
 
   return (
-    <VariantsProvider value={variants}>
-      <AnimatePresence initial={false}>
-        {open ? (
-          <motion.dialog 
-            ref={dialogRef}
-            className={base()}
-            variants={defaultVariants}
-            transition={{ duration: 0.1 }}
-            initial="closed"
-            animate="opened"
-            exit="closed"
-            onAnimationStart={handleAnimationStart}
-            onAnimationComplete={handleAnimationEnd}
-            {...props}
-        >
-          {children}
-        </motion.dialog>
-        ) : null}
-      </AnimatePresence>
-    </VariantsProvider>
+    <DialogProvider value={{
+      isOpen,
+      setIsOpen,
+      variants
+    }}>
+      {children}
+    </DialogProvider>
   );
 }

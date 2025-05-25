@@ -1,15 +1,13 @@
-import React, { 
+import { 
   createContext, 
   useContext, 
-  useState, 
-  ReactNode, 
-  Dispatch, 
-  SetStateAction 
 } from 'react';
+import { type DialogVariants } from './dialog';
 
 interface DialogContextProps {
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: (open: boolean) => void;
+  variants: DialogVariants
 }
 
 const DialogContext = createContext<DialogContextProps | undefined>(undefined);
@@ -22,20 +20,5 @@ export const useDialog = () => {
   return context;
 };
 
-interface DialogProviderProps {
-  children?: ReactNode;
-  initialOpen?: boolean; // Added initialOpen here
-}
 
-export const DialogProvider: React.FC<DialogProviderProps> = ({ 
-  children, 
-  initialOpen = false 
-}) => { // Destructured initialOpen
-  const [open, setOpen] = useState(initialOpen); // Changed isOpen to open and setIsOpen to setOpen to match context
-
-  return (
-    <DialogContext.Provider value={{ isOpen: open, setIsOpen: setOpen }}>
-      {children}
-    </DialogContext.Provider>
-  );
-};
+export const DialogProvider = DialogContext.Provider;
