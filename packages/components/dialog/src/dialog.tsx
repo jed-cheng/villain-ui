@@ -1,10 +1,10 @@
-import React, { useEffect,  useRef } from "react";
+import { useRef } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 import { VariantsProvider } from "./use-variants";
+import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
 
 export const dialogVariants = tv({
   base: [
-    'backdrop:bg-black/80',
     'open:flex open:justify-center open:flex-col',
   ],
   slots: {
@@ -53,6 +53,17 @@ export const dialogVariants = tv({
       center: {
         base: 'top-1/2 left-1/2 -translate-1/2 !m-0',
       }
+    },
+    backdrop: {
+      opaque: {
+        base: 'backdrop:bg-background/50',
+      },
+      blur: {
+        base: 'backdrop:backdrop-blur-xs',
+      },
+      transparent: {
+        base: 'backdrop:opacity-0',
+      },
     }
   },
   defaultVariants: {
@@ -60,6 +71,7 @@ export const dialogVariants = tv({
     size: 'md',
     radius: 'md',
     placement: 'center',
+    backdrop: 'opaque',
   },
 });
 
@@ -68,8 +80,17 @@ export type DialogVariants = VariantProps<typeof dialogVariants>;
 
 
 export interface DialogProps 
-  extends Omit<React.DialogHTMLAttributes<HTMLDialogElement>, keyof DialogVariants>, DialogVariants {
+  extends Omit<HTMLMotionProps<'dialog'>, keyof DialogVariants>, DialogVariants {
 }
+
+
+const defaultVariants = {
+  opened: { opacity: 1, scale: 1 },
+  closed: { opacity: 0, scale: 0.8 },
+}
+
+type AnimationVariants = keyof typeof defaultVariants;
+
 
 export function Dialog({
   open = false,
@@ -79,40 +100,54 @@ export function Dialog({
   placement,
   size,
   radius,
+  backdrop,
   ...props
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const { base } = dialogVariants({ color, size, placement, radius, className });
-
-  useEffect(() => {
-    if (!dialogRef.current) return;
-    const dialog = dialogRef.current;
-
-    if (open && !dialog.open) {
-      dialog.showModal();
-    };
-    if (!open && dialog.open) {
-      dialog.close();
-    };
-  }, [open]);
+  const { base } = dialogVariants({ color, size, placement, radius, backdrop, className });
 
 
-  const variants = {
+  const handleAnimationStart = (variant:AnimationVariants) => {
+    if (dialogRef.current && variant === 'opened') {
+      dialogRef.current?.showModal();
+    }
+  }
+
+  const handleAnimationEnd = (variant:AnimationVariants) => {
+    if (dialogRef.current && variant === 'closed') {
+      dialogRef.current?.close();
+    }
+  }
+
+
+  const variants: DialogVariants = {
     color,
     size,
     placement,
-    radius
+    radius,
+    backdrop
   }
 
   return (
     <VariantsProvider value={variants}>
-      <dialog 
-        ref={dialogRef}
-        className={base()}
-        {...props}
-      >
-        {children}
-      </dialog>
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.dialog 
+            ref={dialogRef}
+            className={base()}
+            variants={defaultVariants}
+            transition={{ duration: 0.1 }}
+            initial="closed"
+            animate="opened"
+            exit="closed"
+            onAnimationStart={handleAnimationStart}
+            onAnimationComplete={handleAnimationEnd}
+            {...props}
+        >
+          {children}
+        </motion.dialog>
+        ) : null}
+      </AnimatePresence>
     </VariantsProvider>
   );
 }
