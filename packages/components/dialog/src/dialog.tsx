@@ -1,58 +1,68 @@
-import React, { useEffect,  useRef } from "react";
+import { useMemo, useState } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
-import { VariantsProvider } from "./use-variants";
+import { DialogProvider } from "./use-dialog";
 
 export const dialogVariants = tv({
-  base: [
-    'backdrop:bg-black/80',
-    'open:flex open:justify-center open:flex-col',
-  ],
+  base: [],
   slots: {
+    content: 'open:flex open:justify-center open:flex-col',
     header: 'p-4', 
     body: 'p-4 flex-grow overflow-auto',
     footer: 'p-4',
+    trigger: '',
   },
   variants: {
     color: {
       default: {
-        base: 'bg-default text-white',
+        content: 'bg-default text-white',
       }
     },
     size: {
       sm: {
-        base: 'w-80 min-h-80 ' 
+        content: 'w-80 min-h-80 ' 
       },
       md: {
-        base: 'w-96 min-h-96 '
+        content: 'w-96 min-h-96 '
       },
       lg: {
-        base: 'w-[32rem] min-h-[32rem] '
+        content: 'w-[32rem] min-h-[32rem] '
       }
     },
     radius: {
       sm: {
-        base: 'rounded-sm'
+        content: 'rounded-sm'
       },
       md: {
-        base: 'rounded-md'
+        content: 'rounded-md'
       },
       lg: {
-        base: 'rounded-lg'
+        content: 'rounded-lg'
       },
       full: {
-        base: 'rounded-full'
+        content: 'rounded-full'
       }
     },
     placement: {
       top: {
-        base: 'top-4 left-1/2 -translate-x-1/2 ',
+        content: 'top-4 left-1/2 -translate-x-1/2 ',
       },
       bottom: {
-        base: 'bottom-4 left-1/2 -translate-x-1/2 !mt-auto !mb-0',// !mb-0 to prevent margin collapse
+        content: 'bottom-4 left-1/2 -translate-x-1/2 !mt-auto !mb-0',// !mb-0 to prevent margin collapse
       },
       center: {
-        base: 'top-1/2 left-1/2 -translate-1/2 !m-0',
+        content: 'top-1/2 left-1/2 -translate-1/2 !m-0',
       }
+    },
+    backdrop: {
+      opaque: {
+        content: 'backdrop:bg-background/50',
+      },
+      blur: {
+        content: 'backdrop:backdrop-blur-xs',
+      },
+      transparent: {
+        content: 'backdrop:opacity-0',
+      },
     }
   },
   defaultVariants: {
@@ -60,59 +70,63 @@ export const dialogVariants = tv({
     size: 'md',
     radius: 'md',
     placement: 'center',
+    backdrop: 'opaque',
   },
 });
 
+export const { content, header, body, footer, trigger } = dialogVariants();
 
 export type DialogVariants = VariantProps<typeof dialogVariants>;
 
 
 export interface DialogProps 
-  extends Omit<React.DialogHTMLAttributes<HTMLDialogElement>, keyof DialogVariants>, DialogVariants {
+  extends DialogVariants {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
+
 export function Dialog({
-  open = false,
-  children,
-  className,
+  open,
+  defaultOpen,
+  onOpenChange,
   color,
   placement,
   size,
   radius,
-  ...props
+  backdrop,
+  children,
 }: DialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const { base } = dialogVariants({ color, size, placement, radius, className });
+  const isControlled = open !== undefined;
+  const [ uncontrolled, setUncontrolled ] = useState(defaultOpen ?? false);
+  const isOpen = isControlled ? open : uncontrolled;
 
-  useEffect(() => {
-    if (!dialogRef.current) return;
-    const dialog = dialogRef.current;
 
-    if (open && !dialog.open) {
-      dialog.showModal();
+  const setIsOpen = (open: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(open);
+      } else {
+        setUncontrolled(open);
+      }
     };
-    if (!open && dialog.open) {
-      dialog.close();
-    };
-  }, [open]);
 
-
-  const variants = {
+  const variants = useMemo(() => ({
     color,
-    size,
     placement,
-    radius
-  }
+    size,
+    radius,
+    backdrop
+  }), [color, placement, size, radius, backdrop]);
 
   return (
-    <VariantsProvider value={variants}>
-      <dialog 
-        ref={dialogRef}
-        className={base()}
-        {...props}
-      >
-        {children}
-      </dialog>
-    </VariantsProvider>
+    <DialogProvider value={{
+      isOpen,
+      setIsOpen,
+      variants
+    }}>
+      {children}
+    </DialogProvider>
   );
 }

@@ -1,77 +1,107 @@
-import React from "react";
-import { tv, type VariantProps } from "tailwind-variants";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
+import { content, DialogVariants } from "./dialog";
+import { useDialog } from "./use-dialog";
 
-// DialogContent styles
-const dialogContentVariants = tv({
-  base: [
-    'relative',
-    'bg-background',
-    'rounded-lg shadow-lg',
-    'flex flex-col',
-    'overflow-hidden',
-    'focus:outline-none',
-    'm-auto',  // Center content within dialog
-    'max-h-[85vh]',  // Prevent content from overflowing the viewport
-  ],
-  variants: {
-    size: {
-      sm: "w-full max-w-sm",
-      md: "w-full max-w-md",
-      lg: "w-full max-w-lg",
-      xl: "w-full max-w-xl",
-      "2xl": "w-full max-w-2xl",
-      full: "w-full h-full",
-    },
-  },
-  defaultVariants: {
-    size: "md",
-  },
-});
 
-export type DialogContentProps = React.ComponentPropsWithoutRef<"div"> & 
-  VariantProps<typeof dialogContentVariants> & {
-    closeButton?: boolean;
-  };
+
+
+export interface DialogContentProps 
+  extends Omit<HTMLMotionProps<'dialog'>, keyof DialogVariants>, DialogVariants {
+}
+
+
+const animationVariants = {
+  enter: { 
+    opacity: [0, 1], 
+    scale: [0.8, 1],
+  },
+  exit: { 
+    opacity: [1, 0], 
+    scale: [1, 0.8],
+  },
+}
+
+type AnimationVariants = keyof typeof animationVariants;
+
 
 export function DialogContent({
-  children,
+  open,
+  color,
+  placement,
   size,
+  radius,
+  backdrop,
   className,
-  closeButton = true,
+  children,
+  style,
   ...props
 }: DialogContentProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const { isOpen, setIsOpen, variants:ctxVariants } = useDialog();
   
+  const variants = useMemo(() => ({
+    ...ctxVariants,
+    color: color ?? ctxVariants.color,
+    placement: placement ?? ctxVariants.placement,
+    size: size ?? ctxVariants.size,
+    radius: radius ?? ctxVariants.radius,
+    backdrop: backdrop ?? ctxVariants.backdrop
+  }), [ctxVariants, color, placement, size, radius, backdrop]);
+
+  const handleAnimationStart = useCallback((variant:AnimationVariants) => {
+    if (dialogRef.current && variant === 'enter') {
+      dialogRef.current.showModal();
+    }
+  }, [])
+
+  const handleAnimationEnd = useCallback((variant:AnimationVariants) => {
+    if (dialogRef.current && variant === 'exit') {
+      dialogRef.current.close();
+    }
+  }, [])
+
+
+  useEffect(() => {
+    if (!dialogRef.current || !isOpen) return;
+    const dialog = dialogRef.current;
+
+    const handleBackdrop = (evt: MouseEvent) => {
+      if (evt.target === dialog) {
+        setIsOpen(false)
+      };
+    };
+
+    dialog.addEventListener('click', handleBackdrop);
+    return () => {
+      dialog.removeEventListener('click', handleBackdrop);
+    };
+  }, [isOpen, setIsOpen]);
+
+
+
   return (
-    <div
-      className={dialogContentVariants({ size, className })}
-      role="document"
-      {...props}
-    >
-      {closeButton && (
-        <button
-          className="absolute right-4 top-4 rounded-sm opacity-70 
-                    transition-opacity hover:opacity-100 focus:outline-none 
-                    focus:ring-2 focus:ring-primary"
-          aria-label="Close"
-          type="button"
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      )}
-      {children}
-    </div>
+    <AnimatePresence>
+      {isOpen ? (
+        <motion.dialog 
+          ref={dialogRef}
+          className={content({ ...variants, className})}
+          variants={animationVariants}
+          transition={{ duration: 0.1 }}
+          animate="enter"
+          exit="exit"
+          style={{
+            transformOrigin: 'center',
+            ...style
+          }}
+          onAnimationStart={handleAnimationStart}
+          onAnimationComplete={handleAnimationEnd}
+          {...props}
+      >
+        {children}
+      </motion.dialog>
+      ) : null}
+    </AnimatePresence>
   );
 }
+DialogContent.displayName = "DialogContent";

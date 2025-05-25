@@ -1,5 +1,5 @@
 import React from "react";
-import { useVariants } from "./use-variants";
+import { body } from "./dialog";
 
 export interface DialogBodyProps extends
   React.HTMLAttributes<HTMLDivElement> {
@@ -12,7 +12,6 @@ export function DialogBody({
   className,
   ...props
 }: DialogBodyProps) {
-  const { body } = useVariants();
 
   return (
     <div
