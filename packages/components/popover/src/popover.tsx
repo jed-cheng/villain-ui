@@ -1,16 +1,41 @@
 import { tv, type VariantProps } from "tailwind-variants";
 import { PopoverProvider } from "./use-popover";
 import React, { useCallback } from "react";
-import { VariantsProvider } from "./use-variants";
 
-const popoverVariants = tv({
+export const popoverVariants = tv({
   base: '',
+  slots: {
+    trigger: '',
+    content: ' shadow-sm',
+    arrow: '',
+  },
   variants: {
+    variant: {
+      solid: {
+        content: ''
+      },
+      outline: {},
+      ghost: {},
+    },
+    radius: {
+      sm: {
+        content: 'rounded-sm',
+        trigger: 'rounded-sm',
+      },
+      md: {
+        content: 'rounded-md',
+        trigger: 'rounded-md',
+      },
+      lg: {
+        content: 'rounded-lg',
+        trigger: 'rounded-lg',
+      }
+    },
     placement: {
-      top: {},
-      bottom: {},
-      left: {},
-      right: {},
+      'top':{},
+      'bottom': {},
+      'left': {},
+      'right': {},
       'top-start': {},
       'top-end': {},
       'bottom-start': {},
@@ -20,9 +45,25 @@ const popoverVariants = tv({
       'right-start': {},
       'right-end': {},
     },
+    backdrop: {
+      opaque: {
+        content: 'backdrop:bg-background/50 ',
+      },
+      blur: {
+        content: 'backdrop:backdrop-blur-xs ',
+      },
+      transparent: {},
+    }
   },
-
+  defaultVariants: {
+    variant: 'solid',
+    backdrop: 'transparent',
+    placement: 'bottom',
+    radius: 'md',
+  }
 })
+
+export const { trigger, content, arrow } = popoverVariants();
 
 export type PopoverVariants = VariantProps<typeof popoverVariants>;
 
@@ -32,16 +73,14 @@ export interface PopoverProps
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     defaultOpen?: boolean;
-    offset?: number;
   }
 
 export const Popover: React.FC<PopoverProps> = ({
   children,
-  placement,
   open,
   onOpenChange,
   defaultOpen = false,
-  offset = 4,
+  ...variants
 }) => {
   const isControlled = open !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen || false);
@@ -57,10 +96,13 @@ export const Popover: React.FC<PopoverProps> = ({
   const triggerRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (
-    <PopoverProvider value={{isOpen, setIsOpen, triggerRef}}>
-      <VariantsProvider value={{placement}}>
+    <PopoverProvider value={{
+      isOpen, 
+      setIsOpen, 
+      triggerRef,
+      variants: variants
+    }}>
         {children}
-      </VariantsProvider>
     </PopoverProvider>
 
   );

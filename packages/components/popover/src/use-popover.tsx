@@ -1,9 +1,11 @@
 import React, { createContext } from "react";
+import { type PopoverVariants } from "./popover";
 
 export interface PopoverContextProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
+  variants: PopoverVariants;
 }
 
 const popoverContext = createContext<PopoverContextProps | null>(null);

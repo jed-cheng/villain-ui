@@ -26,7 +26,11 @@ const meta: Meta<typeof Popover> = {
         'right-end',
       ],
       description: 'Placement of the popover relative to the trigger element.',
-
+    },
+    backdrop: {
+      control: 'select',
+      options: ['opaque', 'blur', 'transparent'],
+      description: 'Backdrop effect for the popover.',
     },
   },
   args: {
