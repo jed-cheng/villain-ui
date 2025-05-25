@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { Dropdown } from '../src/dropdown';
-import { DropdownTrigger } from '../src/dropdown-trigger';
-import { DropdownContent } from '../src/dropdown-content';
-import { DropdownItem } from '../src/dropdown-item';
+import { 
+  Dropdown, 
+  DropdownTrigger, 
+  DropdownContent, 
+  DropdownItem 
+} from '../src';
+
 
 const meta: Meta<typeof Dropdown> = {
   title: 'Components/Dropdown',
@@ -96,7 +99,6 @@ export const Controlled: Story = {
                   className="px-3 py-2 hover:bg-gray-100 rounded cursor-pointer"
                   onClick={() => {
                     setSelectedOption(fruit);
-                    setOpen(false);
                   }}
                 >
                   {fruit}

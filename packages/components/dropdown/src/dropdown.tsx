@@ -10,6 +10,43 @@ export const dropdownVariants = tv({
     item: '',
   },
   variants: {
+    color: {
+      default: {
+        trigger: 'bg-default text-default-foreground ',
+        content: 'bg-default text-default-foreground',
+        item: 'text-default-foreground ',
+      },
+      primary: {
+        trigger: 'bg-primary text-primary-foreground ',
+        content: 'bg-primary text-primary-foreground',
+        item: 'text-primary-foreground ',
+      },
+      secondary: {
+        trigger: 'bg-secondary text-secondary-foreground ',
+        content: 'bg-secondary text-secondary-foreground',
+        item: 'text-secondary-foreground ',
+      },
+      success: {
+        trigger: 'bg-success text-success-foreground ',
+        content: 'bg-success text-success-foreground',
+        item: 'text-success-foreground '
+      },
+      warning: {
+        trigger: 'bg-warning text-warning-foreground ',
+        content: 'bg-warning text-warning-foreground',
+        item: 'text-warning-foreground '
+      },
+      danger: {
+        trigger: 'bg-danger text-danger-foreground ',
+        content: 'bg-danger text-danger-foreground',
+        item: 'text-danger-foreground'
+      },
+    },
+    variant: {
+      solid: {},
+      outline: {},
+      ghost: {}
+    },
     placement: {
       'top':{},
       'bottom': {},
@@ -37,6 +74,8 @@ export const dropdownVariants = tv({
     }
   },
   defaultVariants: {
+    color: 'default',
+    variant: 'solid',
     placement: 'bottom',
     backdrop: 'transparent',
   }
@@ -59,7 +98,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
   defaultOpen,
   onOpenChange,
   children,
-  ...variants
+  color = 'default',
+  variant = 'solid',
+  placement = 'bottom',
+  backdrop = 'transparent',
+
 }) => {
   const isControlled = open !== undefined;
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen ?? false);
@@ -79,7 +122,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
       isOpen,
       setIsOpen,
       triggerRef,
-      variants
+      variants: {
+        color,
+        variant,
+        placement,
+        backdrop,
+      }
     }}>
       {children}
     </DropdownProvider>

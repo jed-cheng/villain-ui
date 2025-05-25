@@ -4,7 +4,7 @@ import { useDropdown } from "./use-dropdown";
 import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
 
 export interface DropdownContentProps
-  extends HTMLMotionProps<'dialog'>, DropdownVariants {
+  extends Omit<HTMLMotionProps<'dialog'>, keyof DropdownVariants>, DropdownVariants {
     offset?: number;
   }
 type Placement = DropdownVariants["placement"]
