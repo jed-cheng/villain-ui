@@ -1,27 +1,30 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
-import { AccordionProvider } from './use-accordion';
+import { AccordionProvider, type AccordionType } from './use-accordion';
+import { LayoutGroup } from "motion/react"
 
 export const accordionVariants = tv({
-  base: [
-
-  ],
+  base: 'w-full h-full',
+  slots: {
+    item: 'w-full',
+    trigger: 'w-full',
+    content: 'overflow-hidden w-full',
+  },
   variants: {
     variant: {
-
+      solid: {},
+      outline: {},
+      ghost: {},
     },
-    disabled: {
-      true: 'opacity-50 cursor-default',
-      false: '',
-    }
   }
 })
 
+export const { base, item, trigger, content } = accordionVariants();
 
 export type AccordionVariants = VariantProps<typeof accordionVariants>;
 export interface AccordionProps
-  extends React.HTMLAttributes<HTMLDivElement>, AccordionVariants {
-  type?: 'single' | 'multiple';
+  extends React.HtmlHTMLAttributes<HTMLDivElement>, AccordionVariants {
+  type?: AccordionType;
   value?: string[];
   defaultValue?: string[];
   onValueChange?: (value: string[]) => void;
@@ -29,17 +32,44 @@ export interface AccordionProps
 
 export const Accordion: React.FC<AccordionProps> = ({
   type = 'single',
-  children,
+  value,
+  defaultValue,
+  onValueChange,
+  variant,
   className,
-  ...props
+  children,
 }) => {
+  const isControlled = value !== undefined;
+  const [internalValue, setInternalValue] = React.useState<string[]>(defaultValue ?? []);
+  const currentValue = isControlled ? value : internalValue;
+  const setValue = useCallback((newValue: string[]) => {
+    if (!isControlled) {
+      setInternalValue(newValue);
+    }
+    if (onValueChange) {
+      onValueChange(newValue);
+    }
+  }, [isControlled, onValueChange]);
+
+
+
   return (
-    <AccordionProvider>
-      <div
-        {...props}
-      >
-        {children}
-      </div>
+    <AccordionProvider value={{
+      type,
+      value: currentValue,
+      setValue,
+      variants: {
+        variant,
+      }
+    }}
+    >
+      <LayoutGroup>
+        <div
+          className={base({className})}
+        >
+          {children}
+        </div>
+      </LayoutGroup>
     </AccordionProvider>
   );
 }
