@@ -2,10 +2,15 @@ import {
   createContext, 
   useContext, 
 } from 'react';
+import { TooltipVariants } from './tooltip';
 
 export interface TooltipContextProps{
-  open: boolean;
-  setOpen: (next: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (next: boolean) => void;
+  triggerRef: React.RefObject<HTMLDivElement | null>;
+  variants: TooltipVariants;
+  delayedOpen: () => void;
+  delayedClose: () => void;
 } 
 
 const TooltipContext = createContext<TooltipContextProps | null>(null);
