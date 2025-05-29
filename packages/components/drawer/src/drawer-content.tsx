@@ -1,99 +1,115 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { AnimatePresence, HTMLMotionProps, motion } from "motion/react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { AnimatePresence, HTMLMotionProps, motion } from "motion/react"; // Changed from framer-motion to motion/react
 import { content, DrawerVariants } from "./drawer";
 import { useDrawer } from "./use-drawer";
 
+export interface DrawerContentProps
+  extends Omit<HTMLMotionProps<"dialog">, keyof DrawerVariants | 'variants' | 'initial' | 'animate' | 'exit' | 'transition'>, // Adjusted Omit
+    DrawerVariants {}
 
+type Placement = DrawerVariants['placement'];
 
-
-export interface DrawerContentProps 
-  extends Omit<HTMLMotionProps<'dialog'>, keyof DrawerVariants>, DrawerVariants {
+const getMotionVariants  = (placement: Placement) => {
+  
+  switch (placement) {
+    case 'left':
+      return {
+        enter: { translateX: ['-100%', 0] },
+        exit: { translateX: [0, '-100%'] },
+      }
+    case 'right':
+      return {
+        enter: { translateX: ['100%', 0] },
+        exit: { translateX: [0, '100%'] },
+      }
+    case 'top':
+      return {
+        enter: { translateY: ['-100%', 0] },
+        exit: { translateY: [0, '-100%'] },
+      }
+    case 'bottom':
+      return {
+        enter: { translateY: ['100%', 0] },
+        exit: { translateY: [0, '100%'] },
+      }
+    default: 
+      return {
+        enter: { translateY: ['100%', 0] },
+        exit: { translateY: [0, '100%'] },
+      }
+  }
 }
 
+type MotionVariantKey = keyof  ReturnType<typeof getMotionVariants>;
 
-const animationVariants = {
-  enter: { 
-    opacity: [0, 1], 
-    scale: [0.8, 1],
-  },
-  exit: { 
-    opacity: [1, 0], 
-    scale: [1, 0.8],
-  },
-}
-
-type AnimationVariants = keyof typeof animationVariants;
-
-
-export function DrawerContent({
-  open,
+export const DrawerContent: React.FC<DrawerContentProps> = ({
   placement,
   className,
   children,
   style,
   ...props
-}: DrawerContentProps) {
+}: DrawerContentProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const { isOpen, setIsOpen, variants:ctxVariants } = useDrawer();
-  
+  const { isOpen, setIsOpen, variants: ctxVariants } = useDrawer();
+
   const variants = useMemo(() => ({
     ...ctxVariants,
-    placement: placement ?? ctxVariants.placement,
+    placement: placement ?? ctxVariants.placement
   }), [ctxVariants, placement]);
 
-  const handleAnimationStart = useCallback((variant:AnimationVariants) => {
-    if (dialogRef.current && variant === 'enter') {
-      dialogRef.current.showModal();
-    }
-  }, [])
+  const motionVariants = useMemo(() => 
+    getMotionVariants(variants.placement), [variants.placement]);
 
-  const handleAnimationEnd = useCallback((variant:AnimationVariants) => {
-    if (dialogRef.current && variant === 'exit') {
+
+  const handleAnimationStart = useCallback((variant: MotionVariantKey) => {
+      if (dialogRef.current && variant === "enter") { 
+        dialogRef.current.showModal();
+      }
+    },[]);
+
+  const handleAnimationComplete = useCallback((variant: MotionVariantKey) => {
+    if (dialogRef.current && variant === "exit") {
       dialogRef.current.close();
     }
-  }, [])
-
+  },[]);
 
   useEffect(() => {
-    if (!dialogRef.current || !isOpen) return;
+    if (!isOpen || !dialogRef.current) return;
     const dialog = dialogRef.current;
 
-    const handleBackdrop = (evt: MouseEvent) => {
+    const handleBackdropClick = (evt: MouseEvent) => {
       if (evt.target === dialog) {
-        setIsOpen(false)
-      };
+        setIsOpen(false);
+      }
     };
 
-    dialog.addEventListener('click', handleBackdrop);
+    dialog.addEventListener("click", handleBackdropClick);
     return () => {
-      dialog.removeEventListener('click', handleBackdrop);
+      dialog.removeEventListener("click", handleBackdropClick);
     };
   }, [isOpen, setIsOpen]);
 
 
-
   return (
     <AnimatePresence>
-      {isOpen ? (
-        <motion.dialog 
-          ref={dialogRef}
-          className={content({ ...variants, className})}
-          variants={animationVariants}
-          transition={{ duration: 0.1 }}
-          animate="enter"
-          exit="exit"
-          style={{
-            transformOrigin: 'center',
-            ...style
-          }}
-          onAnimationStart={handleAnimationStart}
-          onAnimationComplete={handleAnimationEnd}
-          {...props}
-      >
-        {children}
-      </motion.dialog>
-      ) : null}
-    </AnimatePresence>
-  );
+        {isOpen ? (
+          <motion.dialog
+            ref={dialogRef}
+            className={content({ ...variants, className })}
+            variants={motionVariants}
+            animate="enter"
+            exit="exit"
+            transition={{
+              duration: 0.2,
+            }}
+            onAnimationStart={handleAnimationStart}
+            onAnimationComplete={handleAnimationComplete}
+            {...props}
+          >
+            {children}
+          </motion.dialog>
+        ) : null}
+      </AnimatePresence>
+  )
 }
-DrawerContent.displayName = "DialogContent";
+DrawerContent.displayName = "DrawerContent";

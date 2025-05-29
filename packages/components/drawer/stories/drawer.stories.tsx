@@ -12,6 +12,16 @@ const meta: Meta<typeof Drawer> = {
   argTypes: {
     open: { control: 'boolean' },
     onOpenChange: { action: 'onOpenChange' },
+    placement: {
+      control: { type: 'select' },
+      options: ['left', 'right', 'top', 'bottom'],
+      description: 'Placement of the drawer',
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg', 'full'],
+      description: 'Size of the drawer',
+    },
   },
 };
 
@@ -30,9 +40,7 @@ export const Default: Story = {
       </DrawerContent>
     </Drawer>
   ),
-  args: {
-    open: false,
-  },
+
 };
 
 export const Controlled: Story = {
@@ -42,9 +50,8 @@ export const Controlled: Story = {
       <>
         <button onClick={() => setIsOpen(true)} style={{marginRight: '10px'}}>Open Drawer Externally</button>
         <Drawer {...args} open={isOpen} onOpenChange={setIsOpen}>
-          <DrawerTrigger>Toggle Drawer</DrawerTrigger>
           <DrawerContent>
-            <div style={{ padding: '20px', width: '300px' }}>
+            <div style={{ padding: '20px', minWidth: '300px' }}> {/* Ensure content has some base width */}
               <p>This is a controlled drawer.</p>
               <p>Its state is managed externally.</p>
               <button onClick={() => setIsOpen(false)}>Close from inside</button>
@@ -54,8 +61,41 @@ export const Controlled: Story = {
       </>
     );
   },
-  args: {
-    // open and onOpenChange are handled by the render function's state
-  },
 };
 
+
+// Placement variants
+export const Placements: Story = {
+  render: () => (
+    <div className="grid grid-cols-2 gap-8">
+      {(['top', 'bottom', 'left', 'right'] as const).map((placement) => (
+        <Drawer key={placement} placement={placement}>
+          <DrawerTrigger className="bg-purple-500 text-white p-2 rounded">
+            {placement.charAt(0).toUpperCase() + placement.slice(1)} Placement
+          </DrawerTrigger>
+          <DrawerContent className="">
+            <div className="p-2 text-center">{placement} placement</div>
+          </DrawerContent>
+        </Drawer>
+      ))}
+    </div>
+  ),
+};
+
+// Size variants
+export const Sizes: Story = {
+  render: () => (
+    <div className="grid grid-cols-2 gap-8">
+      {(['sm', 'md', 'lg', 'full'] as const).map((size) => (
+        <Drawer key={size} size={size}>
+          <DrawerTrigger className="bg-blue-500 text-white p-2 rounded">
+            {size.charAt(0).toUpperCase() + size.slice(1)} Size
+          </DrawerTrigger>
+          <DrawerContent>
+            <div className="p-2 text-center">{size} size</div>
+          </DrawerContent>
+        </Drawer>
+      ))}
+    </div>
+  ),
+};

@@ -13,16 +13,13 @@ export const DrawerTrigger: React.FC<DrawerTriggerProps> = ({
   onClick,
    ...props
 }) => {
-  const Comp = asChild ? React.Component : 'button';
+  const Comp = asChild ? React.Fragment : 'button';
   const { isOpen, setIsOpen } = useDrawer();
   const handleClick = useCallback((evt: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('DrawerTrigger clicked');
-    if (onClick) {
-      onClick(evt);
-    } 
-
+    onClick?.(evt);
     setIsOpen(!isOpen);
-  }, [onClick, setIsOpen]);
+  }, [isOpen, setIsOpen]);
+
   return (
     <Comp  
       onClick={handleClick}

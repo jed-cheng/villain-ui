@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { DrawerProvider } from './use-drawer';
 import { tv, type VariantProps } from 'tailwind-variants';
 
@@ -12,22 +12,88 @@ export const drawerVariants = tv({
   variants:{
     placement: {
       left:{
-        content: 'left-0 top-0 h-full w-64',
+        content: ' mr-auto h-full',
       },
       right:{
-        content: 'right-0 top-0 h-full w-64',
+        content: ' ml-auto h-full ',
       },
       top:{
-        content: 'top-0 left-0  w-full h-64',
+        content: 'mb-auto w-full',
       },
       bottom:{
-        content: 'bottom-0 left-0 w-full h-64',
+        content: ' mt-auto w-full ',
       },
+
+    },
+    size: {
+      sm: {},
+      md: {},
+      lg: {},
+      full: {}
     }
   },
+  compoundVariants: [
+    {
+      size: 'sm',
+      placement: ['bottom', 'top'],
+      class: {
+        content: ' h-[384px] ',
+      }
+    },
+    {
+      size: 'sm',
+      placement: ['left', 'right'],
+      class: {
+        content: ' w-sm',
+      }
+    },
+    {
+      size: 'md',
+      placement: ['bottom', 'top'],
+      class: {
+        content: ' h-[512px] ',
+      }
+    },
+    {
+      size: 'md',
+      placement: ['left', 'right'],
+      class: {
+        content: ' w-md',
+      }
+    },
+    {
+      size: 'lg',
+      placement: ['bottom', 'top'],
+      class: {
+        content: ' h-[640px] ',
+      }
+    },
+    {
+      size: 'lg',
+      placement: ['left', 'right'],
+      class: {
+        content: ' w-lg',
+      }
+    },
+    {
+      size: 'full',
+      placement: ['bottom', 'top'],
+      class: {
+        content: ' h-full ',
+      }
+    },
+    {
+      size: 'full',
+      placement: ['left', 'right'],
+      class: {
+        content: ' w-full',
+      }
+    },
+  ],
   defaultVariants: {
-    placement: 'bottom',
-  }
+    placement: 'right',
+    size: 'sm',
+  },
 })
 
 export const { content, trigger } = drawerVariants();
@@ -42,47 +108,40 @@ export interface DrawerProps extends DrawerVariants {
   onOpenChange?: (open: boolean) => void;
 }
 
-const Drawer: React.FC<DrawerProps> = ({ 
-  placement = 'bottom',
+export const Drawer: React.FC<DrawerProps> = ({ 
+  placement = 'right',
+  size = 'sm',
   open, 
   onOpenChange,
   defaultOpen,
   children, 
 }) => {
-  const [internalOpen, setInternalOpen] = useState(defaultOpen ?? false);
-  const isOpen = open !== undefined ? open : internalOpen;
+  const isControlled = open !== undefined;
+  const [ internalOpen, setInternalOpen ] = useState(defaultOpen ?? false);
+  const isOpen = isControlled ? open : internalOpen;
 
-  const toggleOpen = useCallback(() => {
-    if (onOpenChange) {
-      onOpenChange(!isOpen);
-    } else {
-      setInternalOpen(!isOpen);
-    }
-  }, [isOpen, onOpenChange]);
 
-  const setIsOpen = useCallback((open: boolean) => {
-    if (onOpenChange) {
-      onOpenChange(open);
+  const setIsOpen = (open: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(open);
     } else {
       setInternalOpen(open);
     }
-  }, [onOpenChange]);
+  };
+
 
   return (
     <DrawerProvider value={{ 
       isOpen, 
       setIsOpen,
-      toggleOpen,
       variants: {
         placement,
+        size,
       }
     }}>
       {children}
     </DrawerProvider>
-
   );
 };
 
 Drawer.displayName = 'Drawer';
-
-export { Drawer };
