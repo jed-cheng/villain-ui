@@ -1,14 +1,15 @@
 import React, { useCallback } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { AccordionProvider, type AccordionType } from './use-accordion';
-import { LayoutGroup } from "motion/react"
+import { LayoutGroup } from 'motion/react';
 
 export const accordionVariants = tv({
-  base: 'w-full h-full',
+  base: 'w-full px-2',
   slots: {
-    item: 'w-full',
-    trigger: 'w-full',
-    content: 'overflow-hidden w-full',
+    item: '',
+    trigger: 'w-full h-full py-4 flex items-center',
+    content: ' overflow-y-hidden',
+    indicator: 'ml-auto',
   },
   variants: {
     variant: {
@@ -19,7 +20,7 @@ export const accordionVariants = tv({
   }
 })
 
-export const { base, item, trigger, content } = accordionVariants();
+export const { base, item, trigger, content, indicator } = accordionVariants();
 
 export type AccordionVariants = VariantProps<typeof accordionVariants>;
 export interface AccordionProps
@@ -63,13 +64,11 @@ export const Accordion: React.FC<AccordionProps> = ({
       }
     }}
     >
-      <LayoutGroup>
-        <div
-          className={base({className})}
-        >
-          {children}
+        <div className={base({className})}>
+          <LayoutGroup>
+            {children}
+          </LayoutGroup>
         </div>
-      </LayoutGroup>
     </AccordionProvider>
   );
 }

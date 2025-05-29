@@ -8,14 +8,28 @@ export interface AccordionContentProps
   extends HTMLMotionProps<'div'> {
   }
 
-const animationVariants = {
+const motionVariants = {
+  initial: {
+    height: 0,
+    opacity: 0,
+  },
   enter: {
-    height: [0, 'auto'],
+    height: 'auto',
+    opacity:  1,
+    transition: {
+      height: { duration: 0.3, ease: "easeInOut" },
+      opacity: { duration: 0.3, ease: "easeInOut" },
+    },
   },
   exit: {
-    height: ['auto', 0],
+    height:  0,
+    opacity:  0,
+    transition: {
+      height: { duration: 0.3, ease: "easeInOut" },
+      opacity: { duration: 0.2, ease: "easeInOut" }, 
+    },
   },
-}
+};
 
 export const AccordionContent: React.FC<AccordionContentProps> = ({
   className,
@@ -26,17 +40,19 @@ export const AccordionContent: React.FC<AccordionContentProps> = ({
   const { isOpen } = useAccordionItem();
   return (
     <AnimatePresence initial={false}>
-      {isOpen? (
+      {isOpen ? (
         <motion.div
+          layout
+          initial="initial"
           animate="enter"
           exit="exit"
-          variants={animationVariants}
+          variants={motionVariants}
           className={content({...variants, className})}
           {...props}
         >
           {children}
         </motion.div>
-      ): null}
+      ) : null}
     </AnimatePresence>
   );
-}
+};

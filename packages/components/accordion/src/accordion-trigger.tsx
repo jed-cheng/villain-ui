@@ -1,19 +1,22 @@
-import React, { useCallback } from "react";
+import React, { HTMLAttributes, useCallback } from "react";
 import { useAccordion } from "./use-accordion";
 import { trigger } from "./accordion";
 import { useAccordionItem } from "./use-accordion-item";
-import { HTMLMotionProps, motion } from "motion/react";
+import { AccordionIndicator } from "./accordion-indicator";
 
 export interface AccordionTriggerProps
-  extends HTMLMotionProps<'button'> {
+  extends HTMLAttributes<HTMLButtonElement>{
+    asChild?: boolean;
   }
 
 export const AccordionTrigger: React.FC<AccordionTriggerProps> = ({
+  asChild = false,
   className,
   children,
   onClick,
   ...props
 }) => {
+  const Comp = asChild ? React.Fragment : 'button';
   const { type, value: currentValue, setValue, variants } = useAccordion();
   const { value } = useAccordionItem();
 
@@ -35,13 +38,13 @@ export const AccordionTrigger: React.FC<AccordionTriggerProps> = ({
 
 
   return (
-    <motion.button
-      layout
+    <Comp
       onClick={handleClick}
       className={trigger({...variants, className})}
       {...props}
     >
       {children}
-    </motion.button>
+      <AccordionIndicator/>
+    </Comp>
   );
 }

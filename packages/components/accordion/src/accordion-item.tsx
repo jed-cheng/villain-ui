@@ -2,7 +2,7 @@ import React, {  useMemo } from "react";
 import { useAccordion } from "./use-accordion";
 import { item } from "./accordion";
 import { AccordionItemProvider } from "./use-accordion-item";
-import { HTMLMotionProps, motion } from "motion/react";
+import { HTMLMotionProps,  motion } from "motion/react";
 
 export interface AccordionItemProps
   extends HTMLMotionProps<'div'> {
@@ -33,6 +33,5 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
         {children}
       </motion.div>
     </AccordionItemProvider>
-
   );
 }

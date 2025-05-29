@@ -206,6 +206,15 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(@vitest/browser@3.1.2)(jiti@2.4.2)(lightningcss@1.29.2)
 
+  packages/components/accordion:
+    devDependencies:
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+
   packages/components/button:
     devDependencies:
       react:

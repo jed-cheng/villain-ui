@@ -9,7 +9,6 @@ const meta: Meta<typeof Accordion> = {
   title: 'Components/Accordion',
   component: Accordion,
   parameters: {
-    layout: 'centered',
     docs: {
       description: {
         component:
@@ -46,7 +45,7 @@ export const Default: Story = {
   },
   render: (args) => (
 
-    <Accordion className='w-[800px]' {...args}>
+    <Accordion {...args}>
       <AccordionItem value="item-1" className="border-b last:border-b-0">
         <AccordionTrigger className=" hover:bg-muted/50  text-left">
           Section 1 Title
@@ -87,31 +86,37 @@ export const Multiple: Story = {
     defaultValue: ['item-1', 'item-3'],
   },
   render: (args) => (
-    <Accordion className='w-[800px]' {...args}>
+    <Accordion {...args}>
       <AccordionItem value="item-1" className="border-b last:border-b-0">
-        <AccordionTrigger className="p-3 hover:bg-muted/50  text-left">
-          Item 1 (Can be open with others)
+        <AccordionTrigger className=" hover:bg-muted/50  text-left">
+          Section 1 Title
         </AccordionTrigger>
-        <AccordionContent className="p-3 text-sm text-muted-foreground">
-          Content for item 1.
+        <AccordionContent className=" text-sm text-muted-foreground">
+          This is the content for the first section. It can contain any React nodes,
+          like text, images, or other components.
         </AccordionContent>
       </AccordionItem>
+
       <AccordionItem value="item-2" className="border-b last:border-b-0">
-        <AccordionTrigger className="p-3 hover:bg-muted/50  text-left">
-          Item 2
+        <AccordionTrigger className=" hover:bg-muted/50  text-left">
+          Section 2 Title
         </AccordionTrigger>
-        <AccordionContent className="p-3 text-sm text-muted-foreground">
-          Content for item 2.
+        <AccordionContent className=" text-sm text-muted-foreground">
+          Content for the second section. Lorem ipsum dolor sit amet, consectetur
+          adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua.
         </AccordionContent>
       </AccordionItem>
+
       <AccordionItem value="item-3">
-        <AccordionTrigger className="p-3 hover:bg-muted/50  text-left">
-          Item 3 (Can be open with others)
+        <AccordionTrigger className=" hover:bg-muted/50  text-left">
+          Section 3 Title (Initially Closed)
         </AccordionTrigger>
-        <AccordionContent className="p-3 text-sm text-muted-foreground">
-          Content for item 3.
+        <AccordionContent className=" text-sm text-muted-foreground">
+          And here is the third section's content. This item starts closed
+          because its value is not in `defaultValue`.
         </AccordionContent>
       </AccordionItem>
-    </Accordion>
+    </Accordion>  
   ),
 };
