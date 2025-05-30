@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Drawer, DrawerTrigger, DrawerContent } from '../src';
 import React from 'react';
 

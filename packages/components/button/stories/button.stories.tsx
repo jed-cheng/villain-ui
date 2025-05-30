@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '../src/index'; // Assuming Button is exported from index.ts
 import { Heart } from 'lucide-react';

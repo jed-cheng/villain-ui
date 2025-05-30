@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Accordion } from '../src';
 import { AccordionItem } from '../src/accordion-item';
 import { AccordionTrigger } from '../src/accordion-trigger';
