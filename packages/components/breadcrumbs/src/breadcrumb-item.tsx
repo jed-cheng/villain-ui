@@ -1,3 +1,7 @@
+import { BreadcrumbSeparator } from "./breadcrumb-separator";
+import { item } from "./theme";
+import { useBreadcrumbs } from "./use-breadcrumbs";
+
 export interface BreadcrumbItemProps
   extends React.HTMLAttributes<HTMLLIElement> {}
 
@@ -6,12 +10,17 @@ export const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
   className,
   ...props
 }) => {
+  const { variants } = useBreadcrumbs();
   return (
     <li
-      className={className}
+      className={item({
+        ...variants,
+        className
+      })}
       {...props}
     >
       {children}
+      <BreadcrumbSeparator/>
     </li>
   );
 }

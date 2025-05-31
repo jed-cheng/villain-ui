@@ -1,25 +1,48 @@
-import { BreadcrumbsVariants } from "./theme";
+import { base, BreadcrumbsVariants } from "./theme";
+import { BreadcrumbsProvider } from "./use-breadcrumbs";
 
 export interface BreadcrumbsProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, keyof BreadcrumbsVariants>,
-    BreadcrumbsVariants {}
+    BreadcrumbsVariants {
+    }
 
 
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   children,
   className,
-  variant = "default",
-  size = "md",
-  color = "default",  
+  variant = "ghost" ,
+  size= "md",
+  color = "default",
+  radius = "md",
+  disabled = false,  
   ...props
 }) => {
+  const variants: BreadcrumbsVariants = {
+    variant,
+    size,
+    color,
+    radius,
+    disabled,
+  };
+  
   return (
-    <nav
-      className={className}
-      {...props}
+    <BreadcrumbsProvider
+      value={{
+        variants
+      }}
     >
+      <nav
+        className={base({
+          ...variants,
+          className,
+        })}
+        {...props}
+      >
+        {children}
+      </nav>
+    </BreadcrumbsProvider>
 
-    </nav>
+
   );
 }
 Breadcrumbs.displayName = "Breadcrumbs";
