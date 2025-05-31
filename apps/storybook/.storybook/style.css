@@ -92,7 +92,20 @@
   --color-danger-700: #FAA0BF;
   --color-danger-800: #FDD0DF;
   --color-danger-900: #FEE7EF;
+
+  --animate-shimmer: shimmer 3s infinite ease-in-out;
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
 }
+
+}
+
+
 
 dialog:modal {
   max-width: 100vw;
