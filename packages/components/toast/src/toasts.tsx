@@ -1,32 +1,57 @@
-import React, { useEffect } from "react";
+import React, {  useSyncExternalStore  } from "react";
 import { createPortal } from "react-dom";
-import { toastManager } from "./toast-manager";
-import { AnimatePresence } from "motion/react";
-import { ToastItem } from "./toast-item";
+import { AnimatePresence, LayoutGroup } from "motion/react";
+import { ToastItem,  } from "./toast-item";
+import { container, ToastVariant } from "./theme";
+import { toastStore } from "./toast-store";
 
-export interface ToastsProps {
-}
+/**
+ * TODOLIST:
+ * - Add pausable progress bar for each toast
+ * - Add global container for toasts
+ * - Add stack layout for toasts
+ */
 
-export const Toasts: React.FC<ToastsProps> = ({}) => {
-  const [toasts, setToasts] = React.useState<any[]>([]);
+const TOAST_CONTAINER_ID = "villainui-toast-container";
 
-  useEffect(() => {
-    const unsubscribe = toastManager.subscribe(setToasts);
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+export interface ToastsProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, keyof ToastVariant>,
+    ToastVariant {
+  }
+
+export const Toasts: React.FC<ToastsProps> = ({
+  placement = 'bottom-right',
+  className,
+  ...props
+}) => {
+
+  const toasts = useSyncExternalStore(
+    toastStore.subscribe,
+    toastStore.getSnapshot,
+  )
 
   return createPortal(
-    <div className="toast-container">
-      <AnimatePresence>
-        {toasts.map((toast, index) => (
-          <ToastItem
-
-          />
-        ))}
-      </AnimatePresence>
-    </div>,
-    document.body || document.getElementById("root") || document.createElement("div")
-  )
+    <div 
+      id={TOAST_CONTAINER_ID} 
+      className={container({
+        placement,
+        className
+      })}
+      onMouseEnter={()=> toastStore.stop()}
+      onMouseLeave={()=> toastStore.start()}
+      {...props}
+    >
+      <LayoutGroup>
+        <AnimatePresence initial={false}>
+          {toasts.map((toast, index) => (
+            <ToastItem
+              key={toast.id}
+              toast={toast}
+              placement={placement}
+            />
+          ))}
+        </AnimatePresence>
+      </LayoutGroup>
+    </div>
+    , document.body)
 }
