@@ -1,12 +1,28 @@
-export interface CarouselContentProps {}
+import React, { useState } from "react";
+import { content } from "./theme";
 
-export const CarouselContent: React.FC<CarouselContentProps> = (props) => {
+
+export interface CarouselContentProps 
+  extends React.HTMLAttributes<HTMLUListElement>{
+  }
+
+
+export const CarouselContent: React.FC<CarouselContentProps> = ({
+  className,
+  children,
+  ...props
+}) => {
+
+
+
+
   return (
-    <div className="carousel-content">
-      <h1>Carousel Content Component</h1>
-      <p>This is a placeholder for the carousel content component.</p>
-      {/* Add carousel content functionality here */}
-    </div>
+    <ul
+      className={content()}
+      {...props}
+    >
+      {children}
+    </ul>
   );
 };
 CarouselContent.displayName = "CarouselContent";

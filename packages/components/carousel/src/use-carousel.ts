@@ -1,6 +1,10 @@
 import React from "react";
+import { CarouselVariants } from "./theme";
 
 export interface CarouselContextProps {
+  variants: CarouselVariants;
+  index: number;
+  setIndex: (value: number) => void;
 
 }
 const CarouselContext = React.createContext<CarouselContextProps | undefined>(undefined);

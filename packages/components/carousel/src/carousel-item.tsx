@@ -1,14 +1,24 @@
-export interface CarouselItemProps {
+import { item } from "./theme";
+
+export interface CarouselItemProps
+  extends React.HTMLAttributes<HTMLLIElement> {
 
 }
 
-export const CarouselItem: React.FC<CarouselItemProps> = (props) => {
+export const CarouselItem: React.FC<CarouselItemProps> = ({
+  className,
+  children,
+}) => {
+
+  
   return (
-    <div className="carousel-item">
-      <h1>Carousel Item Component</h1>
-      <p>This is a placeholder for the carousel item component.</p>
-      {/* Add carousel item functionality here */}
-    </div>
+    <li className={
+      item({
+        className
+      })
+    }>
+      {children}
+    </li>
   );
 };
 CarouselItem.displayName = "CarouselItem";
