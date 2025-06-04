@@ -93,6 +93,10 @@
   --color-danger-800: #FDD0DF;
   --color-danger-900: #FEE7EF;
 
+  
+  --nav-height: 64px;
+
+  /* ─── Shimmer effect ────────────── */
   --animate-shimmer: shimmer 3s infinite ease-in-out;
   @keyframes shimmer {
     0% {
@@ -101,7 +105,9 @@
     100% {
       transform: translateX(100%);
     }
-}
+  }
+
+
 
 }
 

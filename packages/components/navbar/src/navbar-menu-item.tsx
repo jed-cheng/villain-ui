@@ -1,3 +1,5 @@
+import { menuItem } from "./theme";
+
 export interface NavbarMenuItemProps
   extends React.HTMLAttributes<HTMLLIElement> {}
 
@@ -9,7 +11,9 @@ export const NavbarMenuItem: React.FC<NavbarMenuItemProps> = ({
 }) => {
   return (
     <li
-      className={className}
+      className={menuItem({
+        className
+      })}
       {...props}
     >
       {children}

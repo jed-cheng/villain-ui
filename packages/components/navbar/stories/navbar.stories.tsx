@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Navbar } from '../src';
+import { Navbar, NavbarMenu, NavbarMenuItem } from '../src';
 import { NavbarBrand } from '../src/navbar-brand';
-import { Angry } from 'lucide-react';
+import { Angry, Menu } from 'lucide-react';
+import React from 'react';
 
 const meta = {
   title: 'Components/Navbar',
@@ -71,7 +72,7 @@ export const Sticky: Story = {
           </p>
         </NavbarBrand>
 
-         <div className=" flex gap-2 justify-self-center sm:hidden">
+         <div className=" sm:flex gap-2 justify-self-center hidden">
             <p>
               Features
             </p>
@@ -89,6 +90,55 @@ export const Sticky: Story = {
           </button>
       </Navbar>
   ),
+};
+
+export const WithMenu: Story = {
+
+  render: () => {
+    const [open, setOpen] = React.useState(false);
+
+    return (
+      <Navbar className='sticky top-0  z-50 '>
+        <button onClick={() => setOpen(!open)} className="sm:hidden">
+          <Menu />
+        </button>
+        <NavbarMenu open={open} onOpenChange={setOpen} className="sm:hidden">
+          <NavbarMenuItem>
+            Features
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            Pricing
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            About
+          </NavbarMenuItem>
+        </NavbarMenu>
+        <NavbarBrand>
+          <Angry />
+          <p className="text-lg font-bold">
+            VillainUI
+          </p>
+        </NavbarBrand>
+
+         <div className=" sm:flex gap-2 justify-self-center hidden">
+            <p>
+              Features
+            </p>
+            <p>
+              Pricing
+            </p>
+            <p>
+              About
+            </p>
+         </div>
+         <button
+            className="border p-1 text-sm rounded hover:bg-foreground/50 transition-colors"
+         >
+          Get Started
+          </button>
+      </Navbar>
+    )      
+  }
 };
 
 
