@@ -209,6 +209,15 @@ importers:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
 
+  packages/components/breadcrumbs:
+    devDependencies:
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+
   packages/components/button:
     devDependencies:
       react:
@@ -219,6 +228,15 @@ importers:
         version: 19.1.0(react@19.1.0)
 
   packages/components/card:
+    devDependencies:
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+
+  packages/components/carousel:
     devDependencies:
       react:
         specifier: 19.1.0
@@ -309,6 +327,15 @@ importers:
         version: 19.1.0(react@19.1.0)
 
   packages/components/tabs:
+    devDependencies:
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+
+  packages/components/toast:
     devDependencies:
       react:
         specifier: 19.1.0
